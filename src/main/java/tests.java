@@ -54,7 +54,9 @@ import java.net.*;
 public class tests {
   		
   static String separator="<p>\n------------------------------------------------------------------------------------------</p>\n\n";
-  static String result="";
+  public static String result="";
+  public static String overall="";
+  public static String result2="";
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
@@ -86,15 +88,16 @@ public class tests {
 	public int failed=0;
 	
 	
+		
 	public void readdatabase() throws Exception {
 		
 		String tkind;
 		String tid;
 		timesta=timesta%1000000000;
 		File file = new File("reports/"+timesta+".html");
-		//File file2=new File("repor.txt");
+		File file2=new File("reports/result.html");
 		file.delete();
-		//file2.delete();
+		file2.delete();
 		//System.out.println(new Timestamp(date.getTime()));
 		
 		try{
@@ -150,8 +153,8 @@ public class tests {
 		 FirefoxProfile profile = new FirefoxProfile(firefoxProfileFolder);
 		 profile.setAcceptUntrustedCertificates(true);
 		 //profile.addExtension("autoauth-2.1-fx+fn.xpi");
-		 driver = new FirefoxDriver(profile);
-		 //driver = new FirefoxDriver();
+		 //driver = new FirefoxDriver(profile);
+		 driver = new FirefoxDriver();
 		
 		//FirefoxProfile ffprofile = new FirefoxProfile("c:\");
 		//ffprofile.setPreference("network.automatic-ntlm-auth.trusted-uris", "stminver-demo.com");
@@ -162,6 +165,11 @@ public class tests {
 	    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	    //driver.get(baseUrl);
 	    driver.navigate().to(baseUrl);
+	    try{ //Try to bypass company privacy policy
+	    	driver.findElement(By.linkText("Click here to accept this statement and access the Internet.")).click();
+	    }catch (Exception e){
+	    	
+	    }
 						
 		//System.out.println(rs.getString("url"));
 		//driver = new FirefoxDriver();
@@ -170,7 +178,7 @@ public class tests {
 	    try{
 	    	driver.switchTo().alert().accept();
 	    }catch (Exception e){  //Sometimes a pop up appears when launching site
-	    	System.out.println(e);
+	    	//System.out.println(e);
 	    }
 	    
 		driver.manage().timeouts().implicitlyWait(5,TimeUnit.SECONDS);
@@ -183,9 +191,10 @@ public class tests {
 		rs.beforeFirst();
 		
 		FileWriter write = new FileWriter(file,true);
-		String header="<p><FONT COLOR="+(char)34+"black"+(char)34+">\n------------------------------------------------------------------------------------------</p>\n\n<strong>Report for |||" +baseUrl+"||| </FONT></strong></p>\n</body>\n</html>\n";
+		FileWriter write2 = new FileWriter(file2,true);
+		String header="<p><FONT COLOR="+(char)34+"black"+(char)34+">\n------------------------------------------------------------------------------------------</p>\n\n<strong>BATCH ID=" + batchid + "<p><p>URL= " + baseUrl + "<p></FONT></strong></p>";
 		write.write(header);
-		
+		write2.write(header);
 		while(s != n){
 			
 			if (rs.next()){
@@ -208,7 +217,7 @@ public class tests {
 			
 			if(ls.getString("testkind").equals("l1test")){
 				
-				result=result+"<p><H1>L1 Registering Test-----"+ls.getString("testid")+"</H1><p>";
+				//result=result+"<p><H1>L1 Registering Test-----"+ls.getString("testid")+"</H1><p>";
 				//System.out.println(ls.getString("testkind"));	
 				l1test(ls.getString("testid"));
 			
@@ -223,13 +232,24 @@ public class tests {
 		//write.write(header);
     	//write.write("<p>"+result+"<p>");
     	//write.write(footer);
-    	write.write(result);
-		write.close();
+    	//write.write("<p> OVERALL STATUS= "+ overall +" <p>");
+    	write2.write("<p> OVERALL STATUS= "+ overall +" <p>");
+    	write2.write("<p><p><p><p><table border="+(char)34+"1"+(char)34+"><tr><th>TEST</th><th>STATUS</th></tr>");
+    	//write.write((<p><p><p><p><<table border="1"><tr><th>TEST</th><th>STATUS</th></tr>);
+		write.write(result);
+    	write2.write(result2);
+    	write2.write("</tr></table>");
+    	//String currentDir = System.getProperty("user.dir");
+    	write2.write("<p></p><p></p><p></p><p></p> Please follow this <a href="+(char)34+ timesta + ".html"+(char)34+"> LINK </a> for a full report<p>");
+    	
+    	write.close();
+		write2.close();
 		ls.close();
 		rs.close();
 		con.close();
 		//Desktop.getDesktop().open(file);
 		//Desktop.getDesktop().open(file2);
+		System.out.println("All Tests Finished, please refer to " + file + " to see the report");
 		
 		
 
@@ -282,7 +302,7 @@ public class tests {
 
 		
 		
-		System.out.println("Hello");
+		//System.out.println("Hello");
 		
 
 	}
@@ -294,6 +314,8 @@ public class tests {
 		
 		boolean succesful=true;
 		result=result+"<p><h3>" + testid + " Field Validation</h3></p><p></p>";
+		result2=result2+"<td>"+ testid+"</td>";
+		
 		String[] charstouse = new String[invchars.length()];
 		String character="";
 		charstouse=invchars.split("¬");
@@ -324,7 +346,12 @@ public class tests {
 		if(succesful){
 			
 			result=result+"<p>Field validation OK</p><p>------------</p>";
+			result2=result2+"<td>PASS</td>";
+			overall="PASS";
 			
+		}else{
+			result2=result2+"<td>FAILED</td>";
+			overall="FAILED";
 		}
 	}
 	
@@ -332,9 +359,10 @@ public class tests {
 		
 		String fname,lname,email,day,month,year,next,eighteen,accept,login,password,repassword,fun,realbutton,screen;
 		int count=0;
-		
+				
 		boolean success=true;
 		int find=0;
+		result2=result2+"<td>"+testid+"</td>";
 		
 			//try{
 			
@@ -369,7 +397,7 @@ public class tests {
 		
 		String[] link= new String[count];
 		
-		System.out.println(count);
+		//System.out.println(count);
 		
 		if(count>=1){
 		
@@ -383,7 +411,7 @@ public class tests {
 				
 				link[row]=l1rs2.getString("tofind");				
 				link[row]=link[row].replaceAll("¬","'");
-				System.out.println(link[row]);
+				//System.out.println(link[row]);
 				row=row+1;
 			}
 			
@@ -399,43 +427,43 @@ public class tests {
 		fname=fname.replaceAll("¬","'");
 		lname=l1rs.getString("lname");
 		lname=lname.replaceAll("¬","'");
-		System.out.println(lname);
+		//System.out.println(lname);
 		email=l1rs.getString("email");
 		email=email.replaceAll("¬","'");
-		System.out.println(email);
+		//System.out.println(email);
 		day=l1rs.getString("day");
 		day=day.replaceAll("¬","'");
-		System.out.println(day);
+		//System.out.println(day);
 		month=l1rs.getString("month");
 		month=month.replaceAll("¬","'");
-		System.out.println(month);
+		//System.out.println(month);
 		year=l1rs.getString("year");
 		year=year.replaceAll("¬","'");
-		System.out.println(year);
+		//System.out.println(year);
 		next=l1rs.getString("next");
 		next=next.replaceAll("¬","'");
-		System.out.println(next);
+		//System.out.println(next);
 		eighteen=l1rs.getString("eighteen");
 		eighteen=eighteen.replaceAll("¬","'");
-		System.out.println(eighteen);
+		//System.out.println(eighteen);
 		accept=l1rs.getString("accept");
 		accept=accept.replaceAll("¬","'");
-		System.out.println(accept);
+		//System.out.println(accept);
 		login=l1rs.getString("login");
 		login=login.replaceAll("¬","'");
-		System.out.println(login);
+		//System.out.println(login);
 		password=l1rs.getString("password");
 		password=password.replaceAll("¬","'");
-		System.out.println(password);
+		//System.out.println(password);
 		repassword=l1rs.getString("repassword");
 		repassword=repassword.replaceAll("¬","'");
-		System.out.println(repassword);
+		//System.out.println(repassword);
 		fun=l1rs.getString("fun");
 		fun=fun.replaceAll("¬","'");
-		System.out.println(fun);
+		//System.out.println(fun);
 		realbutton=l1rs.getString("realbutton");
 		realbutton=realbutton.replaceAll("¬","'");
-		System.out.println(realbutton);
+		//System.out.println(realbutton);
 		screen="//div[@id='nicknameDialog']/form[@id='nicknameform']/p[@id='nicknameform_txt']/input[@id='nicknameform_input']";
 		
 		//System.out.println(link + "\n"+fname+ "\n"+lname+ "\n"+email+ "\n"+day+ "\n"+month+ "\n"+year+ "\n"+next+ "\n"+eighteen+ "\n"+accept+ "\n"+login+ "\n"+password+ "\n"+fun+ "\n"+realbutton);
@@ -444,6 +472,7 @@ public class tests {
 		System.out.println(z);
 		do{
 			
+			if(find==0){
 			System.out.println(z+"======"+count);
 			try {
 			
@@ -457,15 +486,20 @@ public class tests {
 				
 			} catch (NoSuchElementException e1){
 	    		
-				success=false;					//Control different spelling for Contact Us Link
-				if(z==count){
-				System.out.println("Register Link not found");}	
-	    		//result=(result + "<p><FONT COLOR="+(char)34+"red"+(char)34+">"+ss.getString("tofind")+" Not Finded</FONT><p>");} 
+				success=false;
+				System.out.println("This not");
+				//Control different spelling for Contact Us Link
+				if(z==count-1){
+				System.out.println("Register Link not found");
+				result2=result2+"<td>FAILED</td>";
+				overall="FAILED";
+	    		}
+				//result=(result + "<p><FONT COLOR="+(char)34+"red"+(char)34+">"+ss.getString("tofind")+" Not Finded</FONT><p>");} 
 	       		//If no Contact Us 
 	    	
 			} finally{
 	    	
-				if (success & find==0){
+				if (success){
 	    		
 	    		//Random rand = new Random();
 	    		
@@ -486,6 +520,7 @@ public class tests {
 	    		
 	    		
 	    		System.out.println("Register Clicked");
+	    		find=1;
 	    		//Thread.sleep(500);
 	    		//sendkeys();
 	    			    		
@@ -621,7 +656,7 @@ public class tests {
 	    			driver.findElement(By.cssSelector(repassword)).clear(); 
 		    		driver.findElement(By.cssSelector(repassword)).sendKeys("111111");
 	    		}catch(Exception e){
-	    			System.out.println(e);
+	    			//System.out.println(e);
 	    		}
 	    		
 	    		driver.findElement(By.cssSelector(eighteen)).click();
@@ -654,7 +689,7 @@ public class tests {
 	    		
 	    		
 	    		//String currentURL=driver.getCurrentUrl();
-    			
+    			//driver.wait(500);
 	    		if(driver.getPageSource().contains(genlogin)){
     				//System.out.println("User " + genlogin + " with email "+ genmail + " succesfully registered as level 1 user");
 	    		
@@ -663,20 +698,25 @@ public class tests {
     				System.out.println("User " + genlogin + " with email "+ genmail + " succesfully registered as level 1 user");
     				
     				String screenshot = "screenshots/screenshot" + timesta + ".png";
+    				
     				try {
-
     	                
     					File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
     	                FileUtils.copyFile(scrFile, new File(screenshot));
     	            } catch (IOException e1) {
-    	                e1.printStackTrace();
+    	                System.out.println("Screenshot Failed");
     	            }
     				
     				result=result+"<p>USER="+genlogin+"----"+"E-Mail="+genmail+"-------"+"Level=1<p>-------Succesfully Registered";
     				result=result+"<p> Click on the screenshot to see it larger <a href=../"+screenshot+"><img SRC=../"+screenshot+" width=100 height=100></a><p>";
+    				result2=result2+"<td>PASS</td>";
+    				overall="PASS";
+    				//System.out.println(result + "------"+ result2);
     			}else{
     				
     				result=result+"<p>Something Fails in L1 registration<p>";
+    				result2=result2+"<td>FAILED</td>";
+    				overall="FAILED";
     			}
 	    		
 	    		
@@ -693,7 +733,7 @@ public class tests {
 				}}
 		//driver.close();
 		//driver.quit();
-			z=z+1;
+			}z=z+1;
 	    }while(z!=count);
 //	}
 	
