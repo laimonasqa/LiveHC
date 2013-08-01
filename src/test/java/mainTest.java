@@ -40,15 +40,7 @@ public class mainTest {
 	 * @throws Exception 
 	 */
 	
-public String hola(){
-		
-		return("Ola k ase?");
-	}
-
 	@Test
-	
-	
-	
 	public void main() throws Exception {
 		// TODO Auto-generated method stub
 
