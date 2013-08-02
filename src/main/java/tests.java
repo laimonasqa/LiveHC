@@ -101,7 +101,7 @@ public class tests {
 		File file = new File("reports/"+timesta+".html");
 		File file2=new File("reports/result.html");
 		file.delete();
-		file2.delete();
+		//file2.delete();
 		//System.out.println(new Timestamp(date.getTime()));
 		
 		try{
