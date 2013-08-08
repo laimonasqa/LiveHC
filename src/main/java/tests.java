@@ -327,7 +327,7 @@ public class tests {
 		String[] wdlink = {"a.button_withdraw"};
 		String [][] wdmethod={{"input[name='withdrawalAmount']","text","10"},{"#submit > span","button",""}};
 		
-		int sucess=0;
+		int success=0;
 
 		for(int i=0;i==wdlink.length-1;i++){
 			
@@ -343,11 +343,11 @@ public class tests {
 				
 				System.out.println("Withdrawl Link not found");
 				System.out.println("-----------------------------------");
-				sucess=1;
+				success=1;
 
 			}}
 			
-				if (sucess==0){				
+				if (success==0){				
 				
 										
 					int j=0;
@@ -367,7 +367,7 @@ public class tests {
 							}catch(NoSuchElementException e1){
 							
 								System.out.println("Withdrawl field not found");
-								sucess=1;
+								success=1;
 							}
 						
 						
@@ -427,14 +427,14 @@ public class tests {
 								
 										System.out.println("Redirection failed");
 										System.out.println("-----------------------------------");
-										sucess=1;
+										success=1;
 									}
 														
 							}catch(NoSuchElementException e1){
 							
 								System.out.println("Withdrawl button not found");
 								System.out.println("-----------------------------------");
-								sucess=1;
+								success=1;
 							
 							}
 												
@@ -444,7 +444,7 @@ public class tests {
 				}
 				
 				
-				if (sucess==0){
+				if (success==0){
 					
 					result2=result2+"<td>PASS</td></tr>";
 					System.out.println("Withdrawl Test Passed");
@@ -460,7 +460,7 @@ public class tests {
 	}
 	
 	
-	public boolean paymenterrorcheck(String payment,boolean success){
+	public int paymenterrorcheck(String payment,int success){
 		
 		System.out.println("Checking ====>"+payment+"<===== communication");
 		System.out.println("-----------------------------------");
@@ -533,7 +533,7 @@ public class tests {
 							System.out.println("UKASH Commuication Failed");
 							System.out.println("-----------------------------------");
 							result=result+"<p>UKASH Commuication Failed<p>";
-							success=false;
+							success=1;
 						
 						}
 				
@@ -541,7 +541,7 @@ public class tests {
 					
 						System.out.println("Error Message not found");
 						System.out.println("-----------------------------------");
-						success=false;
+						success=1;
 					
 					}
 					
@@ -549,7 +549,7 @@ public class tests {
 				
 				System.out.println("Something wrong happens in the check");
 				System.out.println("-----------------------------------");
-				success=false;
+				success=1;
 			}
 				
 		
@@ -615,7 +615,7 @@ public class tests {
 								System.out.println("Neteller Commuication Failed");
 								System.out.println("-----------------------------------");
 								result=result+"<p>Neteller Commuication Failed<p>";
-								success=false;
+								success=1;
 							
 							}
 					
@@ -623,7 +623,7 @@ public class tests {
 						
 							System.out.println("Error Message not found");
 							System.out.println("-----------------------------------");
-							success=false;
+							success=1;
 						
 						}
 						
@@ -631,7 +631,7 @@ public class tests {
 					
 					System.out.println("Something wrong happens in the check");
 					System.out.println("-----------------------------------");
-					success=false;
+					success=1;
 				}
 					
 			
@@ -702,7 +702,7 @@ public class tests {
 		//System.out.println(paymentcss);
 		//System.out.println(paymethod.length);
 		
-		int sucess=0;
+		int success=0;
 		
 		for(int i=0;i<paymethod.length;i++){
 			
@@ -718,7 +718,7 @@ public class tests {
 				}catch(NoSuchElementException e1){
 					
 					//System.out.println("Field not found");
-					sucess=1;
+					success=1;
 					result=result+"<p>One of the fields have not been found<p>";
 					System.out.println("Field not found");
 					System.out.println("-----------------------------------");
@@ -797,53 +797,53 @@ public class tests {
 											}else{
 											
 											System.out.println("Transaction Id not present in Receipt");
-											sucess=1;
+											success=1;
 											result=result+"<p>Transaction Id not present in Receipt<p>";
 											}
 										}else{
 										
 											System.out.println("Transaction Type not present in Receipt");
-											sucess=1;
+											success=1;
 											result=result+"<p>Transaction Type not present in Receipt<p>";
 										}
 									}else{
 									
 										System.out.println("Surname not present in Receipt");
-										sucess=1;
+										success=1;
 										result=result+"<p>Surname not present in Receipt<p>";
 									}
 									
 								}else{
 								
 									System.out.println("Transaction Date not present in Receipt");
-									sucess=1;
+									success=1;
 									result=result+"<p>transaction Date not present in Receipt<p>";
 								}
 							}else{
 							
 								System.out.println("Transaction Amount not present in Receipt");
-								sucess=1;
+								success=1;
 								result=result+"<p>Transaction Amount not present in Receipt<p>";
 							}
 							
 						}else{
 						
 							System.out.println("Authorisation Code not present in Receipt");
-							sucess=1;
+							success=1;
 							result=result+"<p>Authorisation Code not present in Receipt<p>";
 						}
 						
 					}else{
 					
 						System.out.println("e-mail not present in Receipt");
-						sucess=1;
+						success=1;
 						result=result+"<p>e-mail not present in Receipt<p>";
 					}
 				
 				}else{
 				
 					System.out.println("Merchant Name not present in Receipt");
-					sucess=1;
+					success=1;
 					result=result+"<p>Merchant Name not present in Receipt<p>";
 				}
 				
@@ -851,7 +851,7 @@ public class tests {
 				
 					System.out.println("Something wrong with payment button");
 					System.out.println("-----------------------------------");
-					sucess=1;
+					success=1;
 											
 				}
 				
@@ -896,7 +896,7 @@ public class tests {
 						}else{
 							System.out.println("User Name not present in Lobby");
 							System.out.println("-----------------------------------");
-							sucess=1;
+							success=1;
 							result=result+"<p>User Name not present in Lobby<p>";
 						}
 						
@@ -904,7 +904,7 @@ public class tests {
 						
 						System.out.println("Redirection after payment does not work well");
 						System.out.println("-----------------------------------");
-						sucess=1;
+						success=1;
 						result=result+"<p>Surname not present in Receipt<p>";
 					}
 				
@@ -916,7 +916,7 @@ public class tests {
 					
 					System.out.println("Something wrong with Play Now button");
 					System.out.println("-----------------------------------");
-					sucess=1;
+					success=1;
 					result=result+"<p>Play Now button failed<p>";
 				}
 			
@@ -925,7 +925,7 @@ public class tests {
 		}
 		
 				
-		if(sucess==0){
+		if(success==0){
 			result2=result2+"<td>PASS</td></tr>";
 			ibnwithdrawl(paymentcss,logname);
 		}else{
@@ -950,7 +950,7 @@ public class tests {
 		result=result+"<p><h3>" + l2test + " IBN L2 TEST</h3></p><p></p>";
 		
 		String what="";
-		boolean success=true;
+		int success=0;
 		//System.out.println(l2test);
 		stat3= con.createStatement();
 		stat4=con.createStatement();
@@ -1044,7 +1044,7 @@ public class tests {
 			System.out.println("phone field not found");
 			System.out.println("-----------------------------------");
 			overall="FAILED";
-			success=false;
+			success=1;
 			result=result+"<p> Phone Field Failed</p>";
 			
 		}
@@ -1059,7 +1059,7 @@ public class tests {
 			System.out.println("street field not found");
 			System.out.println("-----------------------------------");
 			overall="FAILED";
-			success=false;
+			success=1;
 			result=result+"<p> Street Field Failed</p>";
 		}
 		
@@ -1073,7 +1073,7 @@ public class tests {
 			System.out.println("House field not found");
 			System.out.println("-----------------------------------");
 			overall="FAILED";
-			success=false;
+			success=1;
 			result=result+"<p> House Field Failed</p>";
 		}
 		
@@ -1087,7 +1087,7 @@ public class tests {
 			System.out.println("postcode field not found");
 			System.out.println("-----------------------------------");
 			overall="FAILED";
-			success=false;
+			success=1;
 			result=result+"<p> Post Code Field Failed</p>";
 		}
 		
@@ -1101,7 +1101,7 @@ public class tests {
 			System.out.println("city field not found");
 			System.out.println("-----------------------------------");
 			overall="FAILED";
-			success=false;
+			success=1;
 			result=result+"<p> City Field Failed</p>";
 		}
 		
@@ -1115,7 +1115,7 @@ public class tests {
 			System.out.println("answer field not found");
 			System.out.println("-----------------------------------");
 			overall="FAILED";
-			success=false;
+			success=1;
 			result=result+"<p> Answer Field Failed</p>";
 		}
 		
@@ -1130,7 +1130,7 @@ public class tests {
 			System.out.println("Next Button not found");
 			System.out.println("-----------------------------------");
 			overall="FAILED";
-			success=false;
+			success=1;
 			result=result+"<p> Next Button Failed</p>";
 		}
 		
@@ -1154,7 +1154,7 @@ public class tests {
 			System.out.println("Payment Button not found");
 			System.out.println("-----------------------------------");
 			overall="FAILED";
-			success=false;
+			success=1;
 		}
 		
 		try{
@@ -1178,7 +1178,7 @@ public class tests {
 			
 			System.out.println("UserName not showed in deposit page");
 			System.out.println("-----------------------------------");
-			success=false;
+			success=1;
 			result=result+"<p> User Name Not displayed in deposit page</p>";
 		}}
 		
@@ -1277,7 +1277,7 @@ public class tests {
 									System.out.println("-----------------------------------");
 								//	result2=result2+"<td>FAILED</td></tr>";
 									overall="FAILED";
-									success=false;
+									success=1;
 									result=result+"<p> User Name Not displayed in "+chktext+" payment method</p>";
 								}
 							
@@ -1287,7 +1287,7 @@ public class tests {
 								System.out.println("-----------------------------------");
 							//	result2=result2+"<td>FAILED</td></tr>";
 								overall="FAILED";
-								success=false;
+								success=1;
 								result=result+"<p>Payment Name Not displayed in "+chktext+" payment method</p>";
 							}
 								
@@ -1299,14 +1299,14 @@ public class tests {
 							System.out.println("-----------------------------------");
 						//	result2=result2+"<td>FAILED</td></tr>";
 							overall="FAILED";
-							success=false;
+							success=1;
 							result=result+"<p> Depposti button failed in "+chktext+" payment method</p>";
 						}
 				
 					}else{
 					//	result2=result2+"<td>FAILED</td></tr>";
 						overall="FAILED";
-						success=false;
+						success=1;
 						System.out.println("Icon not displayed");
 						System.out.println("-----------------------------------");
 						result=result+"<p>ICON Not displayed for "+chktext+" payment method</p>";
@@ -1358,7 +1358,7 @@ public class tests {
 										System.out.println("-----------------------------------");
 										//result2=result2+"<td>FAILED</td></tr>";
 										overall="FAILED";
-										success=false;
+										success=1;
 										result=result+"<p> User Name Not displayed in "+chktext+" payment method</p>";
 									}
 								
@@ -1368,7 +1368,7 @@ public class tests {
 									System.out.println("-----------------------------------");
 								//	result2=result2+"<td>FAILED</td></tr>";
 									overall="FAILED";
-									success=false;
+									success=1;
 									result=result+"<p> Payment Name Not displayed in "+chktext+" payment method</p>";
 								}
 									
@@ -1380,14 +1380,14 @@ public class tests {
 								System.out.println("-----------------------------------");
 							//	result2=result2+"<td>FAILED</td></tr>";
 								overall="FAILED";
-								success=false;
+								success=1;
 								result=result+"<p> Deposit Button Failed in "+chktext+" payment method</p>";
 							}
 					
 						}else{
 						//	result2=result2+"<td>FAILED</td></tr>";
 							overall="FAILED";
-							success=false;
+							success=1;
 							System.out.println("Payment ICON not displayed");
 							System.out.println("-----------------------------------");
 							result=result+"<p> ICON Not displayed for "+chktext+" payment method</p>";
@@ -1400,7 +1400,7 @@ public class tests {
 					System.out.println("-----------------------------------");
 					//result2=result2+"<td>FAILED</td></tr>";
 					overall="FAILED";
-					success=false;
+					success=1;
 					result=result+"<p> Somethin went wrong in "+chktext+" payment method</p>";
 				}
 		
@@ -1410,7 +1410,7 @@ public class tests {
 			
 			System.out.println(success);
 			
-			if(success=true){
+			if(success==0){
 				
 				System.out.println("-----------------------------------");
 				System.out.println("Payment Checking Successfully Completed");
@@ -1498,7 +1498,7 @@ public class tests {
 		String fname,lname,email,day,month,year,next,eighteen,accept,login,password,repassword,fun,realbutton,screen;
 		int count=0;
 				
-		boolean success=true;
+		int success=0;
 		int find=0;
 		
 		result=result+"<p><h3>" + testid + " IBN L1 Registration Test</h3></p><p></p>";
@@ -1621,7 +1621,7 @@ public class tests {
 			try {
 			
 				
-				success=true;
+				success=0;
 				//System.out.println(link[z]);
 				//System.out.println(z);
 				driver.findElement(By.cssSelector(link[z]));
@@ -1630,7 +1630,7 @@ public class tests {
 				
 			} catch (NoSuchElementException e1){
 	    		
-				success=false;
+				success=1;
 				//System.out.println("This not");
 				//Control different spelling for Contact Us Link
 				if(z==count-1){
@@ -1645,7 +1645,7 @@ public class tests {
 	    	
 			} finally{
 	    	
-				if (success){
+				if (success==0){
 	    		
 	    		//Random rand = new Random();
 	    		
@@ -1675,11 +1675,11 @@ public class tests {
 	    			    		
 	    		}catch(Exception e){
 	    			System.out.println(e);
-	    			success=false;
+	    			success=1;
 	    		}
 				if(driver.getCurrentUrl().toString().contains("registration")){
 					find=1;	
-				if (success){
+				if (success==0){
 	    		//List<WebElement> emailerror = driver.findElements(By.xpath("//div[@id='registration_colA']/div[@id='regerrors'][1]"));
 	    		
 	    		//String genmail="Daniel@hh.com";
@@ -2061,7 +2061,7 @@ public class tests {
 		//System.out.println(testid);
 		//System.out.println(ls.getString("testkind"));
 		String cus=""; 
-		boolean success = true;
+		int success=0;
 		
 			try{
 			
@@ -2094,11 +2094,11 @@ public class tests {
 		
 		//System.out.println(ss.getString("tofind"));
 			try {
-			success=true;
+			success=0;
 			cus=ss.getString("tofind");
 			driver.findElement(By.linkText(cus));
 	    } catch (NoSuchElementException e1){
-	    		success=false;					//Control different spelling for Contact Us Link
+	    		success=1;					//Control different spelling for Contact Us Link
 	    		
 	    		if(ss.isLast() & nolink<=0){
 	    		result=(result + "<p><FONT COLOR="+(char)34+"red"+(char)34+">"+ss.getString("tofind")+" Not Finded</FONT><p>");} 
@@ -2106,7 +2106,7 @@ public class tests {
 	    	
 	    } finally{
 	    	
-	    	if (success & find==0){
+	    	if (success==0 & find==0){
 	    		//If a Contact Us finded
 	    		nolink=1;
 	    		find=1;
