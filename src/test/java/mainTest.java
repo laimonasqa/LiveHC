@@ -74,7 +74,7 @@ public String hola(){
 				test2.setUp();
 			}else{
 				String[] options={args,url,xpath};
-				System.out.println(args+"     "+url+"      "+xpath);
+				//System.out.println(args+"     "+url+"      "+xpath);
 				test.setUp(options);
 			}
 				

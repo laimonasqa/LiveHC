@@ -3,6 +3,8 @@ package main.java;
 import java.awt.*;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import java.awt.event.*;
 import java.awt.FlowLayout;
 import java.awt.event.KeyEvent;
@@ -18,6 +20,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -61,14 +64,19 @@ public class tests {
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
+  
 
   
   
   static Connection con = null;
-	static String servername="db4free.net";
-	static String username="hellpine";
-	static String db="firsttry";
-	static String pass="111111";
+	//static String servername="db4free.net";
+	//static String username="hellpine";
+	//static String db="firsttry";
+	//static String pass="111111";
+  	static String servername="192.168.100.214";
+	static String username="daniel";
+	static String db="automation_dev";
+	static String pass="daniel";
 	public static ResultSet rs=null;
 	public static ResultSet ls=null;
 	public static ResultSet ss=null;
@@ -98,8 +106,14 @@ public class tests {
 		String tkind;
 		String tid;
 		timesta=timesta%1000000000;
-		File file = new File("reports/"+timesta+".html");
-		File file2=new File("reports/result.html");
+		File folder=new File("target/reports");
+		File folder2=new File("target/screenshots");
+		
+		if(!folder.exists()){folder.mkdirs();}
+		if(!folder2.exists()){folder2.mkdirs();}
+		
+		File file = new File("target/reports/"+timesta+".html");
+		File file2=new File("target/reports/result.html");
 		file.delete();
 		//file2.delete();
 		//System.out.println(new Timestamp(date.getTime()));
@@ -121,6 +135,12 @@ public class tests {
 		stat=con.createStatement(); //declare statements variables
 		stat2= con.createStatement();
 		
+		System.out.println("-----------------------------------");
+		System.out.println("Automation Application Rev 0.02");
+		System.out.println("-----------------------------------");
+		
+		System.out.println("Now Adquiring Batch from Database");
+		
 		
 		rs= stat.executeQuery("select * from gotest"); //execute sql query
 						
@@ -128,7 +148,10 @@ public class tests {
 		batchid=String.valueOf(System.getProperty("batch"));
 		if(batchid.equals("null")){
 		batchid=(rs.getString("batchid"));} //read from recordset
-		System.out.println(batchid);
+		System.out.println("Batch successfully Adquired====>" + batchid);
+		System.out.println("-----------------------------------");
+		System.out.println("Adquiring Data from Batch");
+		System.out.println("-----------------------------------");
 		//System.out.println(rs.getString("batchid"));
 		//System.out.println(batchid);
 		//rs.close();
@@ -137,6 +160,11 @@ public class tests {
 		//System.out.println(rs.getString("testid"));
 		rs.first();
 		String url=rs.getString("url");
+		System.out.println("Data Successfully Adquired");
+		System.out.println("-----------------------------------");
+		System.out.println("Opening Site To Test");
+		System.out.println("-----------------------------------");
+		
 		
 		//System.out.println(url);
 		//if(url.contains("http://")){
@@ -177,12 +205,16 @@ public class tests {
 	    }
 	    
 	    String source=driver.getPageSource();
+	    System.out.println("Adquiring Site Language");
+	    System.out.println("-----------------------------------");
 	    
 	    if (source.contains("ontact")){ language="english";}
 	    if (source.contains("ontakt")){ language="norwegian";}
 	    if (source.contains("ö")){ language="swedish";}
 	    
+	    
 	    System.out.println("Site Language=="+language);
+	    System.out.println("-----------------------------------");
 	    		
 	    
 	    
@@ -211,6 +243,9 @@ public class tests {
 		String header="<p><FONT COLOR="+(char)34+"black"+(char)34+">\n------------------------------------------------------------------------------------------</p>\n\n<strong>BATCH ID=" + batchid + "<p><p>URL= " + baseUrl + "<p></FONT></strong></p>";
 		write.write(header);
 		write2.write(header);
+		System.out.println("Adquiring tests from batch");
+	    System.out.println("-----------------------------------");
+		
 		while(s != n){
 			
 			if (rs.next()){
@@ -249,7 +284,9 @@ public class tests {
     	//write.write("<p>"+result+"<p>");
     	//write.write(footer);
     	//write.write("<p> OVERALL STATUS= "+ overall +" <p>");
-    	write2.write("<p> OVERALL STATUS= "+ overall +" <p>");
+		System.out.println("Generating Reports");
+	    System.out.println("-----------------------------------");
+		write2.write("<p> OVERALL STATUS= "+ overall +" <p>");
     	write2.write("<p><p><p><p><table border="+(char)34+"1"+(char)34+"><tr><th>TEST</th><th>STATUS</th></tr>");
     	//write.write((<p><p><p><p><<table border="1"><tr><th>TEST</th><th>STATUS</th></tr>);
 		write.write(result);
@@ -265,9 +302,9 @@ public class tests {
 		con.close();
 		//Desktop.getDesktop().open(file);
 		//Desktop.getDesktop().open(file2);
+		System.out.println("-----------------------------------");
 		System.out.println("All Tests Finished, please refer to " + file + " to see the report");
-		
-		
+		System.out.println("-----------------------------------");
 
 		driver.close();
 		driver.quit();
@@ -279,11 +316,634 @@ public class tests {
 	//}
   
 	
+	public void ibnwithdrawl(String paymentcss,String logname) throws Exception{
+		
+		
+		System.out.println("Launching Withdrawl Test");
+	    System.out.println("-----------------------------------");
+	    
+		result2=result2+"<tr><td>Withdrawl</td>";
+		
+		String[] wdlink = {"a.button_withdraw"};
+		String [][] wdmethod={{"input[name='withdrawalAmount']","text","10"},{"#submit > span","button",""}};
+		
+		int sucess=0;
+
+		for(int i=0;i==wdlink.length-1;i++){
+			
+			try{
+				
+				driver.findElement(By.cssSelector(wdlink[i])).click();
+				System.out.println("Withdrawl Link clicked");
+				System.out.println("-----------------------------------");
+				
+				Thread.sleep(1000);
+				
+			}catch(NoSuchElementException e1){
+				
+				System.out.println("Withdrawl Link not found");
+				System.out.println("-----------------------------------");
+				sucess=1;
+
+			}}
+			
+				if (sucess==0){				
+				
+										
+					int j=0;
+					while(j<=wdmethod.length-1){
+					
+						//System.out.println(wdmethod.length);
+						
+						if(wdmethod[j][1].equals("text")){
+						
+							try{
+							
+								driver.findElement(By.cssSelector(wdmethod[j][0])).clear();
+								driver.findElement(By.cssSelector(wdmethod[j][0])).sendKeys(wdmethod[j][2]);
+								//System.out.println("Withdrawl field found and filled");
+								
+							
+							}catch(NoSuchElementException e1){
+							
+								System.out.println("Withdrawl field not found");
+								sucess=1;
+							}
+						
+						
+						}
+					
+						if(wdmethod[j][1].equals("button")){
+						
+							try{
+							
+								driver.findElement(By.cssSelector(wdmethod[j][0])).click();
+								//System.out.println("Withdrawl button found and clicked");
+							
+								Thread.sleep(1000);
+							
+									try{
+							
+										driver.switchTo().alert().accept();
+										//System.out.println("Alert present and confirmed");
+										Thread.sleep(1000);
+							
+									}catch(NoSuchElementException e1){
+								
+										//System.out.println("Alert not present");
+									}
+							
+									try{
+								
+										driver.switchTo().alert().accept();
+										//System.out.println("Alert present and confirmed");
+										Thread.sleep(1000);
+							
+									}catch(NoSuchElementException e1){
+								
+										//System.out.println("Alert not present");
+									}
+							
+									if(driver.getCurrentUrl().contains("lobby") && driver.getPageSource().contains(logname)){
+								
+										System.out.println("Withdrawl complete and user correctly redirected to lobby");
+										System.out.println("-----------------------------------");
+								
+										String screenshot = "target/screenshots/withdrawl" + timesta + ".png";
+										try {
+					                
+											File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+											FileUtils.copyFile(scrFile, new File(screenshot));
+											result=result+"<p>Screenshot for Withdrawl <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+											//System.out.println("Deposit correctly placed");
+											//result2=result2+"<td>PASS</td></tr>";
+					                
+										} catch (IOException e1) {
+											System.out.println("Screenshot Failed");
+											System.out.println("-----------------------------------");
+										}
+								
+									}else{
+								
+										System.out.println("Redirection failed");
+										System.out.println("-----------------------------------");
+										sucess=1;
+									}
+														
+							}catch(NoSuchElementException e1){
+							
+								System.out.println("Withdrawl button not found");
+								System.out.println("-----------------------------------");
+								sucess=1;
+							
+							}
+												
+						}j=j+1;
+					}
+										
+				}
+				
+				
+				if (sucess==0){
+					
+					result2=result2+"<td>PASS</td></tr>";
+					System.out.println("Withdrawl Test Passed");
+					System.out.println("-----------------------------------");
+					
+				}else{
+					
+					result2=result2+"<td>FAILED</td></tr>";
+					System.out.println("Withdrawl Test Failed");
+					System.out.println("-----------------------------------");
+				}
+				
+	}
+	
+	
+	public boolean paymenterrorcheck(String payment,boolean success){
+		
+		System.out.println("Checking ====>"+payment+"<===== communication");
+		System.out.println("-----------------------------------");
+		
+		String mb1,mb2,uk1,uk2,uke,nt1,nt2,nt3,button;
+		
+		mb1="html body div#wrapper div#full_col div#main_col div#contentPanel div.innerpanelContainer div.innerpanel div#cmsPayContainer div#submitTrack form#moneybookerdepositform fieldset div input#pay_from_email.cmsPayInputField";
+		mb2="html body div#wrapper div#full_col div#main_col div#contentPanel div.innerpanelContainer div.innerpanel div#cmsPayContainer div#submitTrack form#moneybookerdepositform fieldset div input#amount.cmsPayInputField";
+		uk1="input[name='voucherNumber']";
+		uk2="input[name='voucherValue']";
+		uke="//fieldset/div[@id='regerrors']/span";
+		nt1="input[name='accountId']";
+		nt2="input[name='secureId']";
+		nt3="input[name='amount']";
+		button="#submit > span";
+		String Loadmask="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/div[@class='loadmask-msg']/div";
+		
+		WebDriverWait wait = new WebDriverWait(driver, 30);
+		
+		if(payment.equals("ukash")){
+			
+			try{
+				driver.findElement(By.cssSelector(uk1)).clear();
+				driver.findElement(By.cssSelector(uk1)).sendKeys("6337180355029426806");
+				driver.findElement(By.cssSelector(uk2)).clear();
+				driver.findElement(By.cssSelector(uk2)).sendKeys("200");
+				driver.findElement(By.cssSelector(button)).click();
+				
+										
+					try{
+			
+						while(driver.findElement(By.xpath(Loadmask)).isDisplayed()){
+						
+							System.out.println("Waiting for server response");
+							//Thread.sleep(1000);
+						}	
+					
+					}catch(NoSuchElementException e1){
+						
+					}
+					
+					try{
+						
+						
+						while(!driver.findElement(By.xpath(uke)).isDisplayed()){
+							System.out.println("Waiting for error message");
+							//Thread.sleep(1000);
+							
+						}
+						//wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("")));
+					
+					}catch(NoSuchElementException e1){
+						
+						
+					}
+					//System.out.println("Continue");
+					try{
+					
+						String response= driver.findElement(By.xpath(uke)).getText();
+						//System.out.println(response);
+				
+						if(response.contains("Technical Mistake. Please get in contact with Ukash Merchant Support")){
+						
+							//System.out.println("Neteller Commuication Confirmed");
+							result=result+"<p>UKASH Commuication Confirmed<p>";
+							System.out.println("-----------------------------------");
+											
+						}else{
+						
+							System.out.println("UKASH Commuication Failed");
+							System.out.println("-----------------------------------");
+							result=result+"<p>UKASH Commuication Failed<p>";
+							success=false;
+						
+						}
+				
+					}catch(NoSuchElementException e1){
+					
+						System.out.println("Error Message not found");
+						System.out.println("-----------------------------------");
+						success=false;
+					
+					}
+					
+			}catch(NoSuchElementException e1){
+				
+				System.out.println("Something wrong happens in the check");
+				System.out.println("-----------------------------------");
+				success=false;
+			}
+				
+		
+			
+	
+			
+		}
+		
+		if(payment.equals("neteller")){	
+			
+			
+			
+				try{
+					driver.findElement(By.cssSelector(nt1)).clear();
+					driver.findElement(By.cssSelector(nt1)).sendKeys("458591047553");
+					driver.findElement(By.cssSelector(nt2)).clear();
+					driver.findElement(By.cssSelector(nt2)).sendKeys("123456");
+					driver.findElement(By.cssSelector(nt3)).clear();
+					driver.findElement(By.cssSelector(nt3)).sendKeys("10");
+					driver.findElement(By.cssSelector(button)).click();
+					
+											
+						try{
+				
+							while(driver.findElement(By.xpath(Loadmask)).isDisplayed()){
+							
+								System.out.println("Waiting for server response");
+								//Thread.sleep(1000);
+							}	
+						
+						}catch(NoSuchElementException e1){
+							
+						}
+						
+						try{
+							
+							
+							while(!driver.findElement(By.xpath("//fieldset/div[@id='regerrors']")).isDisplayed()){
+								System.out.println("Waiting for error message");
+								//Thread.sleep(1000);
+								
+							}
+							//wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("")));
+						
+						}catch(NoSuchElementException e1){
+							
+							
+						}
+						//System.out.println("Continue");
+						try{
+						
+							String response= driver.findElement(By.xpath("//fieldset/div[@id='regerrors']")).getText();
+							//System.out.println(response);
+					
+							if(response.contains("No client has been found for the specified net_account variable.")){
+							
+								//System.out.println("Neteller Commuication Confirmed");
+								result=result+"<p>Neteller Commuication Confirmed<p>";
+								System.out.println("-----------------------------------");
+												
+							}else{
+							
+								System.out.println("Neteller Commuication Failed");
+								System.out.println("-----------------------------------");
+								result=result+"<p>Neteller Commuication Failed<p>";
+								success=false;
+							
+							}
+					
+						}catch(NoSuchElementException e1){
+						
+							System.out.println("Error Message not found");
+							System.out.println("-----------------------------------");
+							success=false;
+						
+						}
+						
+				}catch(NoSuchElementException e1){
+					
+					System.out.println("Something wrong happens in the check");
+					System.out.println("-----------------------------------");
+					success=false;
+				}
+					
+			
+				
+		}
+		
+				
+		return(success);
+	}
+		
+		
+	public void ibndeposit(String paymentcss,String logname) throws Exception{
+		
+				
+		System.out.println("Starting IBN Deposit");
+		//System.out.println("Payment Method Selected====>"+ paymentcss);
+		System.out.println("-----------------------------------");
+		
+		//driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+		
+		String merchant="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/fieldset/div[3]/label";
+		String email="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/fieldset/div[5]/label";
+		String auth="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/fieldset/div[7]/label";
+		String trans="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/fieldset/div[9]/label";
+		String tdate="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/fieldset/div[11]/label";
+		String surname="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/fieldset/div[13]/label";
+		String ttype="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/fieldset/div[15]/label";
+		String tid="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/fieldset/div[17]/label";
+		
+		
+		String[][] paymethod ={ 	{"input[name='accountId']","458591047553","text"},
+								{"input[name='secureId']","411392","text"},
+								{"input[name='amount']","10","text"},
+								{"#submit > span","","button"}
+					
+		};
+		
+		String[][] arr= new String[15][3];
+		
+		arr[0][0]="hola";
+		arr[0][1]="k";
+		arr[0][2]="ase?";
+		arr[1][0]="Pepe";
+		arr[1][1]="q";
+		arr[1][2]="toma?";
+		
+		WebDriverWait wait = new WebDriverWait(driver, 30);
+		
+		//int j=0;
+		//int l=0;
+		
+		//System.out.println(arr.length);
+		
+		//while(j<=arr.length-1){
+			
+			//while(l<=2){
+				
+				
+				//System.out.println(arr[j][l]);
+				//l=l+1;
+		//	}
+			//l=0;
+		//}
+		
+		
+		String screenshot = "target/screenshots/deposit" + timesta + ".png";
+		//System.out.println(paymethod[1][1]);
+		//System.out.println(paymentcss);
+		//System.out.println(paymethod.length);
+		
+		int sucess=0;
+		
+		for(int i=0;i<paymethod.length;i++){
+			
+			
+			if(paymethod[i][2].equals("text")){
+				
+				try{
+				driver.findElement(By.cssSelector(paymethod[i][0])).clear();
+				driver.findElement(By.cssSelector(paymethod[i][0])).sendKeys(paymethod[i][1]);
+				//System.out.println("Payment Field found and filled");
+				//System.out.println("-----------------------------------");
+				
+				}catch(NoSuchElementException e1){
+					
+					//System.out.println("Field not found");
+					sucess=1;
+					result=result+"<p>One of the fields have not been found<p>";
+					System.out.println("Field not found");
+					System.out.println("-----------------------------------");
+				}
+				
+				
+								
+			}
+			
+			if(paymethod[i][2].equals("button")){
+				
+				try{
+				
+				driver.findElement(By.cssSelector(paymethod[i][0])).click();
+				System.out.println("Deposit button clicked");
+				System.out.println("-----------------------------------");
+				//String btext=driver.findElement(By.cssSelector(paymethod[i][0])).getText().toLowerCase();
+			
+				try{
+				
+				while(driver.findElement(By.cssSelector(paymethod[0][0])).isDisplayed()){
+					
+					
+					System.out.println("Waiting for receipt");
+					System.out.println("-----------------------------------");
+					Thread.sleep(1000);
+					
+				}
+				
+				}catch(NoSuchElementException e1){
+										
+				}
+					
+				
+				
+				//String source=driver.getPageSource().toLowerCase();
+				//System.out.println(source);
+				try{
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(merchant)));
+				}catch(Exception e){
+	    			
+	    		}
+				
+				if(driver.findElement(By.xpath(merchant)).isDisplayed() && driver.findElement(By.xpath(merchant)).getText().toLowerCase().contains("merchant name")){
+					
+					if(driver.findElement(By.xpath(email)).isDisplayed() && driver.findElement(By.xpath(email)).getText().toLowerCase().contains("e-mail")){
+						
+						if(driver.findElement(By.xpath(auth)).isDisplayed() && driver.findElement(By.xpath(auth)).getText().toLowerCase().contains("authorisation")){
+							
+							if(driver.findElement(By.xpath(trans)).isDisplayed() && driver.findElement(By.xpath(trans)).getText().toLowerCase().contains("transaction amount")){
+								
+								if(driver.findElement(By.xpath(trans)).isDisplayed() && driver.findElement(By.xpath(trans)).getText().toLowerCase().contains("transaction amount")){
+							
+									if(driver.findElement(By.xpath(surname)).isDisplayed() && driver.findElement(By.xpath(surname)).getText().toLowerCase().contains("surname")){
+									
+										if(driver.findElement(By.xpath(ttype)).isDisplayed() && driver.findElement(By.xpath(ttype)).getText().toLowerCase().contains("transaction type")){
+										
+											if(driver.findElement(By.xpath(tid)).isDisplayed() && driver.findElement(By.xpath(tid)).getText().toLowerCase().contains("transaction id")){
+											
+											
+											try {
+								                
+												File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+								                FileUtils.copyFile(scrFile, new File(screenshot));
+								                result=result+"<p>Screenshot for the deposit <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+								                System.out.println("Deposit correctly placed");
+								                System.out.println("-----------------------------------");
+								    			//result2=result2+"<td>PASS</td></tr>";
+								                
+								            } catch (IOException e1) {
+								                System.out.println("Screenshot Failed");
+								                System.out.println("-----------------------------------");
+								            }
+											
+																				
+											}else{
+											
+											System.out.println("Transaction Id not present in Receipt");
+											sucess=1;
+											result=result+"<p>Transaction Id not present in Receipt<p>";
+											}
+										}else{
+										
+											System.out.println("Transaction Type not present in Receipt");
+											sucess=1;
+											result=result+"<p>Transaction Type not present in Receipt<p>";
+										}
+									}else{
+									
+										System.out.println("Surname not present in Receipt");
+										sucess=1;
+										result=result+"<p>Surname not present in Receipt<p>";
+									}
+									
+								}else{
+								
+									System.out.println("Transaction Date not present in Receipt");
+									sucess=1;
+									result=result+"<p>transaction Date not present in Receipt<p>";
+								}
+							}else{
+							
+								System.out.println("Transaction Amount not present in Receipt");
+								sucess=1;
+								result=result+"<p>Transaction Amount not present in Receipt<p>";
+							}
+							
+						}else{
+						
+							System.out.println("Authorisation Code not present in Receipt");
+							sucess=1;
+							result=result+"<p>Authorisation Code not present in Receipt<p>";
+						}
+						
+					}else{
+					
+						System.out.println("e-mail not present in Receipt");
+						sucess=1;
+						result=result+"<p>e-mail not present in Receipt<p>";
+					}
+				
+				}else{
+				
+					System.out.println("Merchant Name not present in Receipt");
+					sucess=1;
+					result=result+"<p>Merchant Name not present in Receipt<p>";
+				}
+				
+				}catch(NoSuchElementException e1){
+				
+					System.out.println("Something wrong with payment button");
+					System.out.println("-----------------------------------");
+					sucess=1;
+											
+				}
+				
+				try{
+					driver.findElement(By.cssSelector(paymethod[i][0])).click();
+					System.out.println("Play Now Button Clicked");
+					System.out.println("-----------------------------------");
+					
+					//Thread.sleep(1000);
+					try{
+					wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("BODY")));
+					}catch(Exception e){
+		    			
+		    		}
+					//System.out.println(driver.getCurrentUrl().toString());
+					if(driver.getCurrentUrl().toString().contains("lobby")){
+						
+						if(driver.getPageSource().contains(logname)){
+							
+						
+						System.out.println("User successfully redirected to Lobby Page");
+						System.out.println("-----------------------------------");
+						
+						screenshot = "target/screenshots/deposithome" + timesta + ".png";
+						
+						try {
+			                
+							File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+			                FileUtils.copyFile(scrFile, new File(screenshot));
+			                result=result+"<p>Screenshot for the redirection <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+			                System.out.println("Deposit correctly placed");
+			                System.out.println("-----------------------------------");
+			    			//result2=result2+"<td>PASS</td></tr>";
+			                
+			            } catch (IOException e1) {
+			                System.out.println("Screenshot Failed");
+			                System.out.println("-----------------------------------");
+			            }
+						
+						
+						
+						}else{
+							System.out.println("User Name not present in Lobby");
+							System.out.println("-----------------------------------");
+							sucess=1;
+							result=result+"<p>User Name not present in Lobby<p>";
+						}
+						
+					}else{
+						
+						System.out.println("Redirection after payment does not work well");
+						System.out.println("-----------------------------------");
+						sucess=1;
+						result=result+"<p>Surname not present in Receipt<p>";
+					}
+				
+					
+				
+						
+					
+				}catch(NoSuchElementException e1){
+					
+					System.out.println("Something wrong with Play Now button");
+					System.out.println("-----------------------------------");
+					sucess=1;
+					result=result+"<p>Play Now button failed<p>";
+				}
+			
+			}
+			
+		}
+		
+				
+		if(sucess==0){
+			result2=result2+"<td>PASS</td></tr>";
+			ibnwithdrawl(paymentcss,logname);
+		}else{
+			result2=result2+"<td>FAILED</td></tr>";
+		}
+	}
+	
+	
 	public void ibnl2(String logname,String email,String l2test) throws Exception{
+		
+		System.out.println("-----------------------------------");
+		System.out.println("Starting IBN L2 Test");
+		System.out.println("-----------------------------------");
+		
 		
 		String phonecss,streetcss,housecss,postcodecss,citycss,answercss,nextbuttoncss,paymentcss;
 		String phone,street,house,postcode,city,answer;
-		System.out.println(l2test);
+		//System.out.println(l2test);
 		String testtoget="";
 		String testid="";
 		
@@ -301,7 +961,7 @@ public class tests {
 		l2rs1.first();
 		
 		String testk=l2rs1.getString("testkind");
-		System.out.println(testk);
+		//System.out.println(testk);
 				
 		if(testk.equals("ibnl2chk")){
 			
@@ -313,7 +973,7 @@ public class tests {
 			l2rs2=stat.executeQuery("select * from ibnl2straight where testid='" + testtoget +"'");
 			l2rs2.first();
 			what="checkonly";
-			System.out.println(testid);
+			//System.out.println(testid);
 		}
 			
 		if(testk.equals("ibnl2str")){
@@ -322,7 +982,7 @@ public class tests {
 			l2rs2=stat.executeQuery("select * from ibnl2straight where testid='" + testid  +"'");
 			l2rs2.first();
 			what="YES";
-			System.out.println(testid);
+			//System.out.println(testid);
 			
 		}
 		
@@ -330,6 +990,7 @@ public class tests {
 		
 		//phonecss="input[name='newPlayer.address.homePhone']";
 		System.out.println("Adquiring IBN L2 Commom data");
+		System.out.println("-----------------------------------");
 		phonecss=l2rs2.getString("phone");
 		phonecss=phonecss.replaceAll("¬","'");
 		//streetcss="input[name='newPlayer.address.address1']";
@@ -354,6 +1015,7 @@ public class tests {
 		paymentcss=l2rs2.getString("payment");
 		paymentcss=paymentcss.replaceAll("¬","'");
 		System.out.println("IBN L2 Commom data adquired");
+		System.out.println("-----------------------------------");
 		
 		phone="11111111111";
 		street="QA street";			//Default Values
@@ -364,7 +1026,14 @@ public class tests {
 		
 		Thread.sleep(1000);
 		
-		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		//driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		
+		WebDriverWait wait = new WebDriverWait(driver, 30);
+		try{
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(phonecss)));
+		}catch(Exception e){
+			
+		}
 		try{
 			
 			driver.findElement(By.cssSelector(phonecss)).clear();
@@ -373,6 +1042,7 @@ public class tests {
 		}catch(NoSuchElementException e1){
 			
 			System.out.println("phone field not found");
+			System.out.println("-----------------------------------");
 			overall="FAILED";
 			success=false;
 			result=result+"<p> Phone Field Failed</p>";
@@ -387,6 +1057,7 @@ public class tests {
 		}catch(NoSuchElementException e1){
 			
 			System.out.println("street field not found");
+			System.out.println("-----------------------------------");
 			overall="FAILED";
 			success=false;
 			result=result+"<p> Street Field Failed</p>";
@@ -400,6 +1071,7 @@ public class tests {
 		}catch(NoSuchElementException e1){
 			
 			System.out.println("House field not found");
+			System.out.println("-----------------------------------");
 			overall="FAILED";
 			success=false;
 			result=result+"<p> House Field Failed</p>";
@@ -413,6 +1085,7 @@ public class tests {
 		}catch(NoSuchElementException e1){
 			
 			System.out.println("postcode field not found");
+			System.out.println("-----------------------------------");
 			overall="FAILED";
 			success=false;
 			result=result+"<p> Post Code Field Failed</p>";
@@ -426,6 +1099,7 @@ public class tests {
 		}catch(NoSuchElementException e1){
 			
 			System.out.println("city field not found");
+			System.out.println("-----------------------------------");
 			overall="FAILED";
 			success=false;
 			result=result+"<p> City Field Failed</p>";
@@ -435,10 +1109,11 @@ public class tests {
 			
 			driver.findElement(By.cssSelector(answercss)).clear();
 			driver.findElement(By.cssSelector(answercss)).sendKeys(answer);
-			System.out.println("answer");
+			//System.out.println("answer");
 		}catch(NoSuchElementException e1){
 			
 			System.out.println("answer field not found");
+			System.out.println("-----------------------------------");
 			overall="FAILED";
 			success=false;
 			result=result+"<p> Answer Field Failed</p>";
@@ -449,10 +1124,11 @@ public class tests {
 		try{
 			
 			driver.findElement(By.cssSelector(nextbuttoncss)).click();
-			System.out.println("Boton");			
+			//System.out.println("Boton");			
 		}catch(NoSuchElementException e1){
 			
 			System.out.println("Next Button not found");
+			System.out.println("-----------------------------------");
 			overall="FAILED";
 			success=false;
 			result=result+"<p> Next Button Failed</p>";
@@ -461,42 +1137,49 @@ public class tests {
 		//if(overall.equals("FAILED")){result2=result2+"<td>FAILED</td></tr>";
 		//overall="FAILED";}
 		
-		Thread.sleep(1000);
+		//Thread.sleep(1000);
+		System.out.println("-----------------------------------");
+		System.out.println("L2 Step1 Completed");
+		System.out.println("-----------------------------------");
 		
 		if (what.equals("YES")){
 		
 		try{
 			
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(paymentcss)));
 			driver.findElement(By.cssSelector(paymentcss)).click();
 						
 		}catch(NoSuchElementException e1){
 			
 			System.out.println("Payment Button not found");
+			System.out.println("-----------------------------------");
 			overall="FAILED";
 			success=false;
 		}
 		
-		Thread.sleep(1000);
+		try{
+		wait.until(ExpectedConditions.textToBePresentInElement(By.cssSelector("BODY"),logname));
+		}catch(Exception e){
+			
+		}
 		
 		if(driver.getPageSource().contains(logname)){
 			
-			System.out.println("User ==>"+ logname + "<== with email ==>" + email +"<== succesfully registered as L2 'No payment at the moment'");
-			result2=result2+"<td>PASS</td></tr>";
-			String screenshot = "screenshots/screenshot" + timesta + ".png";
 			
-			try {
-                
-				File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-                FileUtils.copyFile(scrFile, new File(screenshot));
-                result=result+"<p>Screenshot for this payment <a href=../"+screenshot+"><img SRC=../"+screenshot+" width=100 height=100></a><p>";
-                
-            } catch (IOException e1) {
-                System.out.println("Screenshot Failed");
-            }
+			ibndeposit(paymentcss,logname);
+			
+			//System.out.println("User ==>"+ logname + "<== with email ==>" + email +"<== succesfully registered as L2 'No payment at the moment'");
+			//result2=result2+"<td>PASS</td></tr>";
+			//String screenshot = "target/screenshots/screenshot" + timesta + ".png";
+			
+			//
 			
 		}else{
 			
-			System.out.println("Something wrong in code");
+			System.out.println("UserName not showed in deposit page");
+			System.out.println("-----------------------------------");
+			success=false;
+			result=result+"<p> User Name Not displayed in deposit page</p>";
 		}}
 		
 		if(what.equals("checkonly")){
@@ -542,6 +1225,10 @@ public class tests {
 				chktext=l2rs3.getString("texttocheck");
 				chktext=chktext.replaceAll("¬","'");
 			
+				result=result+"<p>-----------------------------<p>";
+				result=result+"<p>"+chktext+" Payment Method Checking<p>";
+				result=result+"<p>-----------------------------<p>";
+				
 				try{
 				
 					if(!chkbutton.contains("//")){
@@ -557,23 +1244,28 @@ public class tests {
 							if(source.contains(chktext)){
 							
 								System.out.println("Payment Method ==" + chktext + "== Present");
+								System.out.println("-----------------------------------");
 							
 								if(driver.getPageSource().contains(logname)){
 								
 									System.out.println("User Name ==" + logname + "== Present");
 									System.out.println("Payment Name ==" + chktext + "== Present");
+									System.out.println("-----------------------------------");
+									success=paymenterrorcheck(chktext,success);
+									//System.out.println("Success after payment check===>"+success);
 									//result2=result2+"<td>PASS</td></tr>";
-									String screenshot = "screenshots/" + chktext + timesta + ".png";
+									String screenshot = "target/screenshots/" + chktext + timesta + ".png";
 									
 									try {
 						                
 										File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 						                FileUtils.copyFile(scrFile, new File(screenshot));
 						                
-						                result=result+"<p>Screenshot for this payment <a href=../"+screenshot+"><img SRC=../"+screenshot+" width=100 height=100></a><p>";
+						                result=result+"<p>Screenshot for this payment <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 						                
 						            } catch (IOException e1) {
 						                System.out.println("Screenshot Failed");
+						                System.out.println("-----------------------------------");
 						            }
 									
 									result=result+"<p>"+chktext+" Payment OK</p>";
@@ -582,6 +1274,7 @@ public class tests {
 								}else{
 								
 									System.out.println("User Name ==" + logname + "== Not Present");
+									System.out.println("-----------------------------------");
 								//	result2=result2+"<td>FAILED</td></tr>";
 									overall="FAILED";
 									success=false;
@@ -591,6 +1284,7 @@ public class tests {
 							}else{
 							
 								System.out.println("Payment Method ==" + chktext + "== Error");
+								System.out.println("-----------------------------------");
 							//	result2=result2+"<td>FAILED</td></tr>";
 								overall="FAILED";
 								success=false;
@@ -602,6 +1296,7 @@ public class tests {
 						}catch(NoSuchElementException e1){
 					
 							System.out.println(chktext+" Deposit button error");
+							System.out.println("-----------------------------------");
 						//	result2=result2+"<td>FAILED</td></tr>";
 							overall="FAILED";
 							success=false;
@@ -613,6 +1308,7 @@ public class tests {
 						overall="FAILED";
 						success=false;
 						System.out.println("Icon not displayed");
+						System.out.println("-----------------------------------");
 						result=result+"<p>ICON Not displayed for "+chktext+" payment method</p>";
 					}
 					
@@ -636,18 +1332,20 @@ public class tests {
 									
 										System.out.println("User Name ==" + logname + "== Present");
 										System.out.println("Payment Name ==" + chktext + "== Present");
+										System.out.println("-----------------------------------");
 										//result2=result2+"<td>PASS</td></tr>";
-										String screenshot = "screenshots/" + chktext + timesta + ".png";
+										String screenshot = "target/screenshots/" + timesta + ".png";
 										
 										try {
 							                
 											File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 							                FileUtils.copyFile(scrFile, new File(screenshot));
 							                
-							                result=result+"<p>Screenshot for this payment <a href=../"+screenshot+"><img SRC=../"+screenshot+" width=100 height=100></a><p>";
+							                result=result+"<p>Screenshot for this payment <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 							                
 							            } catch (IOException e1) {
 							                System.out.println("Screenshot Failed");
+							                System.out.println("-----------------------------------");
 							            }
 										
 										result=result+"<p>"+chktext+" Payment OK</p>";
@@ -655,6 +1353,7 @@ public class tests {
 									}else{
 									
 										System.out.println("User Name ==" + logname + "== Not Present");
+										System.out.println("-----------------------------------");
 										//result2=result2+"<td>FAILED</td></tr>";
 										overall="FAILED";
 										success=false;
@@ -664,6 +1363,7 @@ public class tests {
 								}else{
 								
 									System.out.println("Payment Method ==" + chktext + "== Error");
+									System.out.println("-----------------------------------");
 								//	result2=result2+"<td>FAILED</td></tr>";
 									overall="FAILED";
 									success=false;
@@ -675,6 +1375,7 @@ public class tests {
 							}catch(NoSuchElementException e1){
 						
 								System.out.println(chktext+" Deposit button error");
+								System.out.println("-----------------------------------");
 							//	result2=result2+"<td>FAILED</td></tr>";
 								overall="FAILED";
 								success=false;
@@ -686,6 +1387,7 @@ public class tests {
 							overall="FAILED";
 							success=false;
 							System.out.println("Payment ICON not displayed");
+							System.out.println("-----------------------------------");
 							result=result+"<p> ICON Not displayed for "+chktext+" payment method</p>";
 						}
 					}
@@ -693,6 +1395,7 @@ public class tests {
 				}catch(NoSuchElementException e1){
 				
 					System.out.println("Something went wrong");
+					System.out.println("-----------------------------------");
 					//result2=result2+"<td>FAILED</td></tr>";
 					overall="FAILED";
 					success=false;
@@ -703,11 +1406,20 @@ public class tests {
 			
 			}
 			
+			System.out.println(success);
+			
 			if(success=true){
 				
+				System.out.println("-----------------------------------");
+				System.out.println("Payment Checking Successfully Completed");
+				System.out.println("-----------------------------------");
 				result2=result2+"<td>PASS</td></tr>";
 				
 			}else{
+				
+				System.out.println("-----------------------------------");
+				System.out.println("Payment Checking Failed");
+				System.out.println("-----------------------------------");
 				
 				result2=result2+"<td>FAILED</td></tr>";
 			}
@@ -773,6 +1485,13 @@ public class tests {
 	}
 	
 	public void l1test(String testid) throws Exception{
+		
+		
+		System.out.println("-----------------------------------");
+		System.out.println("IBN L1 Registration Test");
+		System.out.println("-----------------------------------");
+		
+		
 		
 		String fname,lname,email,day,month,year,next,eighteen,accept,login,password,repassword,fun,realbutton,screen;
 		int count=0;
@@ -886,18 +1605,23 @@ public class tests {
 		String enterbutton="/html/body/div[@id='nicknameDialog']/form[@id='nicknameform']/p[@id='nicknameform_txt']/input[@id='nicknameform_bt']";
 		//System.out.println(link + "\n"+fname+ "\n"+lname+ "\n"+email+ "\n"+day+ "\n"+month+ "\n"+year+ "\n"+next+ "\n"+eighteen+ "\n"+accept+ "\n"+login+ "\n"+password+ "\n"+fun+ "\n"+realbutton);
 
+		
+		System.out.println("Looking for Registration Link");
+		System.out.println("-----------------------------------");
+		
+		
 		int z=0;
-		System.out.println(z);
+		//System.out.println(z);
 		do{
 			
 			if(find==0){
-			System.out.println(z+"======"+count);
+			//System.out.println(z+"======"+count);
 			try {
 			
 				
 				success=true;
-				System.out.println(link[z]);
-				System.out.println(z);
+				//System.out.println(link[z]);
+				//System.out.println(z);
 				driver.findElement(By.cssSelector(link[z]));
 				
 				
@@ -905,10 +1629,11 @@ public class tests {
 			} catch (NoSuchElementException e1){
 	    		
 				success=false;
-				System.out.println("This not");
+				//System.out.println("This not");
 				//Control different spelling for Contact Us Link
 				if(z==count-1){
 				System.out.println("Register Link not found");
+				System.out.println("-----------------------------------");
 				result2=result2+"<tr><td>"+testid+"</td>";
 				result2=result2+"<td>FAILED</td></tr>";
 				overall="FAILED";
@@ -923,12 +1648,14 @@ public class tests {
 	    		//Random rand = new Random();
 	    		
 	    		
-				System.out.println("Register finded");
+					System.out.println("Registration Link Successfully Finded");
+					System.out.println("-----------------------------------");
+					
 				
 				try{
 	    		
 	    			
-				driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+				//driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
 	    		driver.findElement(By.cssSelector(link[z])).click();
 	    		//String linkurl = clicklink.getAttribute("href");
 	    		//linkurl=linkurl.replace("http://","https://4646:4646@");
@@ -938,7 +1665,7 @@ public class tests {
 	    		
 	    		
 	    		
-	    		System.out.println("Register Clicked");
+	    		//System.out.println("Register Clicked");
 	    		
 	    		
 	    		//Thread.sleep(500);
@@ -955,10 +1682,10 @@ public class tests {
 	    		
 	    		//String genmail="Daniel@hh.com";
 	    		
+				WebDriverWait wait = new WebDriverWait(driver, 30);
 	    		
-	    		
-	    		System.out.println("Sigue");
-	    		System.out.println(driver.getCurrentUrl().toString());
+	    		//System.out.println("Sigue");
+	    		//System.out.println(driver.getCurrentUrl().toString());
 	    		String txtxpath;
 	    		
 	    		
@@ -1001,12 +1728,15 @@ public class tests {
 	    			
 	    		
 	    		
-	    		
-	    		
+	    		try{
+	    		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(email)));
+	    		}catch(Exception e){
+	    			
+	    		}
 	    		String genmail="QAautomation"+timesta+"@gtech.com";
 	    		driver.findElement(By.cssSelector(email)).clear(); 
 	    		driver.findElement(By.cssSelector(email)).sendKeys(genmail);
-	    		System.out.println("email");
+	    		//System.out.println("email");
 	    		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 	    		//while(driver.findElement(By.xpath("//div[@id='registration_colA']/div[@id='regerrors'][1]")).isDisplayed()){ //Check if the e-mail is already registered
 	    		
@@ -1025,10 +1755,10 @@ public class tests {
 	    		driver.findElement(By.cssSelector(fname)).sendKeys("Daniel");
 	    	    //driver.findElement(By.cssSelector("input[name=\'newPlayer.firstName\']")).clear();
 	    	    //driver.findElement(By.cssSelector("input[name=\'newPlayer.firstName\']")).sendKeys("Daniel");
-	    		System.out.println("FName");
+	    		//System.out.println("FName");
 	    		driver.findElement(By.cssSelector(lname)).clear(); 
 	    		driver.findElement(By.cssSelector(lname)).sendKeys("Prado");
-	    		System.out.println("LName");
+	    		//System.out.println("LName");
 	    		
 	    		
 	    		
@@ -1038,26 +1768,34 @@ public class tests {
 	    		//daydrop.deselectAll();
 	    		//daydrop.selectByVisibleText("18");
 	    		daydrop.selectByIndex(18);
-	    		System.out.println("Day");
+	    		//System.out.println("Day");
 	    		Select monthdrop = new Select(driver.findElement(By.cssSelector(month)));
 	    		//daydrop.deselectAll();
 	    		//monthdrop.selectByVisibleText("Jun");
 	    		monthdrop.selectByIndex(6);
-	    		System.out.println("Month");
+	    		//System.out.println("Month");
 	    		Select yeardrop = new Select(driver.findElement(By.cssSelector(year)));
 	    		//daydrop.deselectAll();
 	    		//yeardrop.selectByVisibleText("1977");
 	    		yeardrop.selectByIndex(10);
 	    		
-	    		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+	    		//driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	    		driver.findElement(By.cssSelector(next)).click();
+
+	    		System.out.println("L1 Step1 Completed");
+	    		System.out.println("-----------------------------------");
 	    		
-	    		Thread.sleep(1000);
+	    		try{
+	    		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(login)));
+	    		}catch(Exception e){
+	    			
+	    		}
 	    		String genlogin="mrt"+timesta;
 	    		//genlogin="okbingo7";
+	    		Thread.sleep(1000);
 	    		driver.findElement(By.cssSelector(login)).clear(); 
 	    		driver.findElement(By.cssSelector(login)).sendKeys(genlogin);
-	    		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+	    		//driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 	    		
 	    		driver.findElement(By.cssSelector(password)).clear(); 
 	    		//driver.findElement(by.cssSelector(password)).sendKeys("111111");
@@ -1106,16 +1844,16 @@ public class tests {
     				
     			
     				String l2testid=l1rs2.getString("testid");
-    				System.out.println(l2testid);
+    				//System.out.println(l2testid);
     				
     				stat.clearBatch();
     				l1rs3= stat.executeQuery("select testid,testkind from tests where testid='"+ l2testid +"'");
     				l1rs3.first();
-    				System.out.println(l2testid);
+    				//System.out.println(l2testid);
     				    		
     				if(l1rs3.getString("testkind").contains("l2")){
     			
-    					System.out.println(l1rs3.getString("testid"));
+    					//System.out.println(l1rs3.getString("testid"));
     					l2test=l2testid;
     					l2present="YES";
     				}
@@ -1130,12 +1868,32 @@ public class tests {
 	    		
 	    		if(l2present.equals("YES")||l2present.equals("checkonly")){
 	    			driver.findElement(By.cssSelector(realbutton)).click();
+	    			System.out.println("L1 Step2 Completed");
+		    		System.out.println("-----------------------------------");
 	    			Thread.sleep(1000);
 	    			
 	    			try{
+	    				
+	    				driver.switchTo().alert().accept();
+	    				
+	    			}catch(NoAlertPresentException e){
+	    				
+	    			}
+	    			
+	    			try{
 		    			
-		    			
+		    			int p=0;
 	    				//driver.switchTo().alert().dismiss();
+	    				//wait.until(ExpectedConditions.elementToBeClickable(By.xpath(enterbutton)));
+	    				try{
+	    					
+	    					while(!driver.findElement(By.xpath(screen)).isDisplayed()){
+	    						
+	    						p=1;
+	    					}
+	    				}catch(Exception e){
+	    					
+	    				}
 	    				String screenname=genlogin.replace("mrt", "");
 	    			
 	    				driver.findElement(By.xpath(screen)).clear(); 
@@ -1144,7 +1902,8 @@ public class tests {
 	    				
 	    			}catch (NoSuchElementException e){
 	    			
-	    				System.out.println("No screen name required");
+	    				//System.out.println("No screen name required");
+	    				//System.out.println("-----------------------------------");
 	    				
 	    			
 	    			}
@@ -1156,6 +1915,9 @@ public class tests {
 	    			ibnl2(genlogin,genmail,l2test);
 	    			
 	    		}else{
+	    			
+	    			System.out.println("L1 Step2 Completed");
+		    		System.out.println("-----------------------------------");
 	    			driver.findElement(By.cssSelector(fun)).click();
 				
 	    		
@@ -1175,24 +1937,42 @@ public class tests {
 	    		//}
 	    		
 	    		
-	    			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+	    			//driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	    			int screenpresent=0;
 	    		
 	    		
-	    		
 	    			try{
+	    				
+	    				driver.switchTo().alert().accept();
+	    				
+	    			}catch(NoAlertPresentException e){
+	    				
+	    			}
 	    			
-	    			
+	    			try{
+	    				    				
+	    				int p=0;
+	    				
+	    				try{
+	    					
+	    					while(!driver.findElement(By.xpath(screen)).isDisplayed()){
+	    						
+	    						p=1;
+	    					}
+	    				}catch(Exception e){
+	    					
+	    				}
 	    				//driver.switchTo().alert().dismiss();
 	    				String screenname=genlogin.replace("mrt", "");
-	    			
+	    				
 	    				driver.findElement(By.xpath(screen)).clear(); 
 	    				driver.findElement(By.xpath(screen)).sendKeys(screenname); //Handle Screen name
 	    				driver.findElement(By.xpath(enterbutton)).click();
 	    				screenpresent=1;
 	    			}catch (NoSuchElementException e){
 	    			
-	    				System.out.println("No screen name required");
+	    				//System.out.println("No screen name required");
+	    				//System.out.println("-----------------------------------");
 	    				screenpresent=0;
 	    			
 	    			}
@@ -1205,9 +1985,11 @@ public class tests {
 	    		
     				stat3.executeUpdate("insert into testuser(username,email,level) values('" + genlogin + "','"+genmail+"','1')");
 	    		
+    				System.out.println("-----------------------------------");
     				System.out.println("User " + genlogin + " with email "+ genmail + " succesfully registered as level 1 user");
+    				System.out.println("-----------------------------------");
     				
-    				String screenshot = "screenshots/screenshot" + timesta + ".png";
+    				String screenshot = "target/screenshots/screenshot" + timesta + ".png";
     				
     				while(screenpresent==1){
     				
@@ -1225,10 +2007,11 @@ public class tests {
     	                FileUtils.copyFile(scrFile, new File(screenshot));
     	            } catch (IOException e1) {
     	                System.out.println("Screenshot Failed");
+        				System.out.println("-----------------------------------");
     	            }
     				
     				result=result+"<p>USER="+genlogin+"----"+"E-Mail="+genmail+"-------"+"Level=1<p>-------Succesfully Registered";
-    				result=result+"<p> Click on the screenshot to see it larger <a href=../"+screenshot+"><img SRC=../"+screenshot+" width=100 height=100></a><p>";
+    				result=result+"<p> Click on the screenshot to see it larger <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
     				result2=result2+"<tr><td>"+testid+"</td>";
     				result2=result2+"<td>PASS</td></tr>";
     				//overall="PASS";
@@ -1664,4 +2447,12 @@ public class tests {
   }
 	  	  
 	  
-  }
+ 
+
+@After
+public void tearDown() throws Exception {
+ driver.quit();
+}
+
+}
+
