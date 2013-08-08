@@ -529,7 +529,7 @@ public class tests {
 						String response= driver.findElement(By.xpath(uke)).getText();
 						//System.out.println(response);
 				
-						if(response.contains("TEST Technical Mistake. Please get in contact with Ukash Merchant Support")){
+						if(response.contains("Technical Mistake. Please get in contact with Ukash Merchant Support")){
 						
 							//System.out.println("Neteller Commuication Confirmed");
 							result=result+"<p>UKASH Commuication Confirmed<p>";
