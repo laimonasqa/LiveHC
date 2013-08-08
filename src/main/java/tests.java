@@ -2,7 +2,11 @@ package main.java;
 
 import java.awt.*;
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.OutputType;
+import java.lang.reflect.Method;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.awt.event.*;
@@ -46,6 +50,8 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.TakesScreenshot;
+
+
 
 
 
@@ -640,6 +646,7 @@ public class tests {
 		}
 		
 				
+		if(success==1){ overall="FAILED";}
 		return(success);
 	}
 		
@@ -2457,7 +2464,7 @@ public class tests {
 	  
  
 
-@After
+  @After
 public void tearDown() throws Exception {
  driver.quit();
 }
