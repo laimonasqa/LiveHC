@@ -455,6 +455,7 @@ public class tests {
 					result2=result2+"<td>FAILED</td></tr>";
 					System.out.println("Withdrawl Test Failed");
 					System.out.println("-----------------------------------");
+					overall="FAILED";
 				}
 				
 	}
@@ -522,7 +523,7 @@ public class tests {
 						String response= driver.findElement(By.xpath(uke)).getText();
 						//System.out.println(response);
 				
-						if(response.contains("TEST Technical Mistake. Please get in contact with Ukash Merchant Support TEST")){
+						if(response.contains("TEST Technical Mistake. Please get in contact with Ukash Merchant Support")){
 						
 							//System.out.println("Neteller Commuication Confirmed");
 							result=result+"<p>UKASH Commuication Confirmed<p>";
@@ -930,6 +931,7 @@ public class tests {
 			ibnwithdrawl(paymentcss,logname);
 		}else{
 			result2=result2+"<td>FAILED</td></tr>";
+			overall="FAILED";
 		}
 	}
 	
@@ -1676,6 +1678,7 @@ public class tests {
 	    		}catch(Exception e){
 	    			System.out.println(e);
 	    			success=1;
+	    			
 	    		}
 				if(driver.getCurrentUrl().toString().contains("registration")){
 					find=1;	
