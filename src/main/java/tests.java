@@ -303,7 +303,7 @@ public class tests {
 		//Desktop.getDesktop().open(file);
 		//Desktop.getDesktop().open(file2);
 		System.out.println("-----------------------------------");
-		System.out.println("All Tests Finished, please refer to " + file + " to see the report");
+		System.out.println("All Tests Finished, please refer to email to see the report");
 		System.out.println("-----------------------------------");
 
 		driver.close();
@@ -1326,6 +1326,7 @@ public class tests {
 								if(source.contains(chktext)){
 								
 									System.out.println("Payment Method ==" + chktext + "== Present");
+									System.out.println("-----------------------------------");
 								
 									
 									if(driver.getPageSource().contains(logname)){
@@ -1333,8 +1334,9 @@ public class tests {
 										System.out.println("User Name ==" + logname + "== Present");
 										System.out.println("Payment Name ==" + chktext + "== Present");
 										System.out.println("-----------------------------------");
+										success=paymenterrorcheck(chktext,success);
 										//result2=result2+"<td>PASS</td></tr>";
-										String screenshot = "target/screenshots/" + timesta + ".png";
+										String screenshot = "target/screenshots/" + chktext + timesta + ".png";
 										
 										try {
 							                
@@ -1649,7 +1651,7 @@ public class tests {
 	    		
 	    		
 					System.out.println("Registration Link Successfully Finded");
-					System.out.println("-----------------------------------");
+					
 					
 				
 				try{
@@ -1685,7 +1687,8 @@ public class tests {
 				WebDriverWait wait = new WebDriverWait(driver, 30);
 	    		
 	    		//System.out.println("Sigue");
-	    		//System.out.println(driver.getCurrentUrl().toString());
+	    		System.out.println(driver.getCurrentUrl().toString());
+	    		System.out.println("-----------------------------------");
 	    		String txtxpath;
 	    		
 	    		
@@ -1908,6 +1911,8 @@ public class tests {
 	    			
 	    			}
 	    			
+	    			System.out.println("USER="+genlogin+"----"+"E-Mail="+genmail+"-------"+"Level=1-------Succesfully Registered");
+	    			System.out.println("-----------------------------------");
 	    			result=result+"<p>USER="+genlogin+"----"+"E-Mail="+genmail+"-------"+"Level=1<p>-------Succesfully Registered";
     				//result=result+"<p> Click on the screenshot to see it larger <a href=../"+screenshot+"><img SRC=../"+screenshot+" width=100 height=100></a><p>";
     				result2=result2+"<tr><td>"+testid+"</td>";
