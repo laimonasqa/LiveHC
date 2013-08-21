@@ -38,6 +38,8 @@ import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.KeyDownAction;
@@ -50,6 +52,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 
 
@@ -104,6 +107,8 @@ public class tests {
 	public static Statement stat4=null;
 	public int total=0;
 	public int failed=0;
+	
+	public static String browser;
 	
 
 	@Test
@@ -186,6 +191,7 @@ public class tests {
 	
 		//System.out.println(url);
 		
+		browser=String.valueOf(System.getProperty("browser"));
 		baseUrl=(url);
 		 //FirefoxBinary binary = new FirefoxBinary();  
 		 //File firefoxProfileFolder = new 
@@ -194,8 +200,43 @@ public class tests {
 		 //profile.setAcceptUntrustedCertificates(true);
 		 //profile.addExtension("autoauth-2.1-fx+fn.xpi");
 		 //driver = new FirefoxDriver(profile);
-		 driver = new FirefoxDriver();
-		 driver.manage().deleteAllCookies();
+		 //driver = new FirefoxDriver();
+		
+		//System.out.println(browser);
+		
+		if(!browser.equals("null")){
+			
+		
+			if(browser.equals("chrome")){
+				
+				DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+				capabilities.setCapability("chrome.switches", Arrays.asList("--disable-loggin"));
+				System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
+				driver = new ChromeDriver(capabilities);
+			
+			}
+			
+			if(browser.equals("ie")){
+				
+				File file = new File("IEDriverServer.exe");
+				System.setProperty("webdriver.ie.driver", file.getAbsolutePath());
+				driver = new InternetExplorerDriver();
+			
+			}
+		
+		
+			
+			if(browser.equals("firefox")){
+			
+				driver = new FirefoxDriver();
+			}
+			
+		}else{
+			
+			driver = new FirefoxDriver();
+		}
+		
+		//driver.manage().deleteAllCookies();
 		
 		//FirefoxProfile ffprofile = new FirefoxProfile("c:\");
 		//ffprofile.setPreference("network.automatic-ntlm-auth.trusted-uris", "stminver-demo.com");
@@ -203,9 +244,10 @@ public class tests {
 		//ffprofile.setAcceptUntrustedCertificates(true);
 		//ffprofile.setAssumeUntrustedCertificateIssuer(false);
 		//driver = new FirefoxDriver(ffprofile);
-		 driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		
+		 driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
 	    //driver.get(baseUrl);
-	    driver.navigate().to(baseUrl);
+	    driver.get(baseUrl);
 	    try{ //Try to bypass company privacy policy
 	    	driver.findElement(By.linkText("Click here to accept this statement and access the Internet.")).click();
 	    }catch (Exception e){
@@ -535,14 +577,15 @@ public class tests {
 		mb2="html body div#wrapper div#full_col div#main_col div#contentPanel div.innerpanelContainer div.innerpanel div#cmsPayContainer div#submitTrack form#moneybookerdepositform fieldset div input#amount.cmsPayInputField";
 		uk1="input[name='voucherNumber']";
 		uk2="input[name='voucherValue']";
-		uke="//fieldset/div[@id='regerrors']/span";
+		uke="#regerrors span";
+		//uke=uke.toUpperCase();
 		nt1="input[name='accountId']";
 		nt2="input[name='secureId']";
 		nt3="input[name='amount']";
 		button="#submit > span";
 		button2="a#submit.btn";
 		String Loadmask="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/div[@class='loadmask-msg']/div";
-		
+		Loadmask=Loadmask.toUpperCase();
 		WebDriverWait wait = new WebDriverWait(driver, 30);
 		
 		if(payment.equals("ukash")){
@@ -574,7 +617,7 @@ public class tests {
 					try{
 						
 						
-						while(!driver.findElement(By.xpath(uke)).isDisplayed()){
+						while(!driver.findElement(By.cssSelector(uke)).isDisplayed()){
 							System.out.println("Waiting for error message");
 							//Thread.sleep(1000);
 							
@@ -588,7 +631,7 @@ public class tests {
 					//System.out.println("Continue");
 					try{
 					
-						String response= driver.findElement(By.xpath(uke)).getText();
+						String response= driver.findElement(By.cssSelector(uke)).getText();
 						//System.out.println(response);
 				
 						if(response.contains("Technical Mistake. Please get in contact with Ukash Merchant Support")){
@@ -663,7 +706,10 @@ public class tests {
 						try{
 							
 							
-							while(!driver.findElement(By.xpath("//fieldset/div[@id='regerrors']")).isDisplayed()){
+							//String error="//fieldset/div[@id='regerrors']";
+							//error=error.toUpperCase();
+							
+							while(!driver.findElement(By.cssSelector("#regerrors span")).isDisplayed()){
 								System.out.println("Waiting for error message");
 								//Thread.sleep(1000);
 								
@@ -677,7 +723,9 @@ public class tests {
 						//System.out.println("Continue");
 						try{
 						
-							String response= driver.findElement(By.xpath("//fieldset/div[@id='regerrors']")).getText();
+							//String errmsg="//fieldset/div[@id='regerrors']";
+							//errmsg=errmsg.toUpperCase();
+							String response= driver.findElement(By.cssSelector("#regerrors span")).getText();
 							//System.out.println(response);
 					
 							if(response.contains("No client has been found for the specified net_account variable.")){
@@ -739,19 +787,27 @@ public class tests {
 		String surname="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/fieldset/div[13]/label";
 		String ttype="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/fieldset/div[15]/label";
 		String tid="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/fieldset/div[17]/label";
+		//if(browser.equals("ie")){
+			//merchant=merchant.toUpperCase();
+			//email=email.toUpperCase();
+			//auth=auth.toUpperCase();
+			//trans=trans.toUpperCase();
+			//tdate=tdate.toUpperCase();
+			//surname=surname.toUpperCase();
+			//ttype=ttype.toUpperCase();
+			//tid=tid.toUpperCase();}
 		
+		String[][] paymethod ={ 	{"input[name='accountId']","458591047553","text"}, //Stage
+								{"input[name='secureId']","411392","text"},
+								{"input[name='amount']","10","text"},
+								{"#submit > span","","button"},
+								{"a#submit.btn","","button"}
 		
-		//String[][] paymethod ={ 	{"input[name='accountId']","458591047553","text"}, //Stage
-			//					{"input[name='secureId']","411392","text"},
-				//				{"input[name='amount']","10","text"},
-					//			{"#submit > span","","button"},
-						//		{"a#submit.btn","","button"}
-		
-		String[][] paymethod ={ 	{"input[name='accountId']","453523465418","text"}, //Live
-							{"input[name='secureId']","664902","text"},
-							{"input[name='amount']","10","text"},
-							{"#submit > span","","button"},
-							{"a#submit.btn","","button"}
+		//String[][] paymethod ={ 	{"input[name='accountId']","453523465418","text"}, //Live
+			//				{"input[name='secureId']","664902","text"},
+				//			{"input[name='amount']","10","text"},
+					//		{"#submit > span","","button"},
+						//	{"a#submit.btn","","button"}
 		
 		};
 		
@@ -1562,7 +1618,9 @@ public class tests {
 				try{
 				
 					if(!chkbutton.contains("//")){
-					if(driver.findElement(By.cssSelector(chkicon)).isDisplayed()){
+						
+						
+						if(driver.findElement(By.cssSelector(chkicon)).isDisplayed()){
 					
 						try{
 						
@@ -1708,6 +1766,7 @@ public class tests {
 					
 					}else{
 						
+						chkbutton=chkbutton.toUpperCase();
 						if(driver.findElement(By.cssSelector(chkicon)).isDisplayed()){
 							
 							try{
@@ -1919,8 +1978,8 @@ public class tests {
 				
 			
 			
-			
-			if(!driver.findElement(By.xpath("//div[@class='regerrors']")).isDisplayed()){
+			String regerr="//div[@class='regerrors']";
+			if(!driver.findElement(By.xpath(regerr)).isDisplayed()){
 				
 				
 				succesful=false;
@@ -2064,8 +2123,10 @@ public class tests {
 		realbutton=l1rs.getString("realbutton");
 		realbutton=realbutton.replaceAll("¬","'");
 		//System.out.println(realbutton);
-		screen="//div[@id='nicknameDialog']/form[@id='nicknameform']/p[@id='nicknameform_txt']/input[@id='nicknameform_input']";
-		String enterbutton="/html/body/div[@id='nicknameDialog']/form[@id='nicknameform']/p[@id='nicknameform_txt']/input[@id='nicknameform_bt']";
+		screen="input[id='nicknameform_input']";
+		//screen=screen.toUpperCase();
+		String enterbutton="input[id='nicknameform_bt']";
+		//enterbutton=enterbutton.toUpperCase();
 		//System.out.println(link + "\n"+fname+ "\n"+lname+ "\n"+email+ "\n"+day+ "\n"+month+ "\n"+year+ "\n"+next+ "\n"+eighteen+ "\n"+accept+ "\n"+login+ "\n"+password+ "\n"+fun+ "\n"+realbutton);
 
 		
@@ -2422,7 +2483,7 @@ public class tests {
 	    				//wait.until(ExpectedConditions.elementToBeClickable(By.xpath(enterbutton)));
 	    				try{
 	    					
-	    					while(!driver.findElement(By.xpath(screen)).isDisplayed()){
+	    					while(!driver.findElement(By.cssSelector(screen)).isDisplayed()){
 	    						
 	    						p=1;
 	    					}
@@ -2431,9 +2492,9 @@ public class tests {
 	    				}
 	    				String screenname=genlogin.replace("mrt", "");
 	    			
-	    				driver.findElement(By.xpath(screen)).clear(); 
-	    				driver.findElement(By.xpath(screen)).sendKeys(screenname); //Handle Screen name
-	    				driver.findElement(By.xpath(enterbutton)).click();
+	    				driver.findElement(By.cssSelector(screen)).clear(); 
+	    				driver.findElement(By.cssSelector(screen)).sendKeys(screenname); //Handle Screen name
+	    				driver.findElement(By.cssSelector(enterbutton)).click();
 	    				
 	    			}catch (NoSuchElementException e){
 	    			
@@ -2509,7 +2570,7 @@ public class tests {
 	    				
 	    				try{
 	    					
-	    					while(!driver.findElement(By.xpath(screen)).isDisplayed()){
+	    					while(!driver.findElement(By.cssSelector(screen)).isDisplayed()){
 	    						
 	    						p=1;
 	    					}
@@ -2519,9 +2580,9 @@ public class tests {
 	    				//driver.switchTo().alert().dismiss();
 	    				String screenname=genlogin.replace("mrt", "");
 	    				
-	    				driver.findElement(By.xpath(screen)).clear(); 
-	    				driver.findElement(By.xpath(screen)).sendKeys(screenname); //Handle Screen name
-	    				driver.findElement(By.xpath(enterbutton)).click();
+	    				driver.findElement(By.cssSelector(screen)).clear(); 
+	    				driver.findElement(By.cssSelector(screen)).sendKeys(screenname); //Handle Screen name
+	    				driver.findElement(By.cssSelector(enterbutton)).click();
 	    				screenpresent=1;
 	    			}catch (NoSuchElementException e){
 	    			

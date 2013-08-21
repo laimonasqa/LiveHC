@@ -98,7 +98,16 @@ public String hola(){
 	 @After
 	 public void tearDown() throws Exception {
 		 	
-		 	main.java.tests test = new main.java.tests();
+		 	main.java.tests test = new main.java.tests();	
+		 
+		 	String color="";
+	    	
+	    	if(test.overall.equals("FAILED")){color=(char)34+"RED"+(char)34;
+	    	}//else{
+	    		//color=(char)34+"BLACK"+(char)34;
+	    	//}
+		 
+	    	
 		 	String buildurl=String.valueOf(System.getProperty("buildurl"));
 		 	
 		 
@@ -117,14 +126,15 @@ public String hola(){
 			System.out.println("Generating Reports");
 		    System.out.println("-----------------------------------");
 			
-	    	write2.write("<p><p><p><p><table border="+(char)34+"1"+(char)34+"><tr><th>TEST</th><th>STATUS</th></tr>");
+	    	write2.write("<p><p><p><p><table border="+(char)34+"1"+(char)34+" bgcolor="+color+"><tr><th>TEST</th><th>STATUS</th></tr>");
 	    	
 	    	write.write(test.result);
 	    	write2.write(test.result2);
 	    	
-	    	write2.write("</tr></table>");
+	    	write2.write("</tr></table></font>");
 	    	
-	    	write2.write("<p> OVERALL STATUS= "+ test.overall +" <p>");
+	    	
+	    	write2.write("<p> OVERALL STATUS=<font color="+ color+">"+test.overall +"</font> <p>");
 	    	
 	    	if(!buildurl.equals("null")){
 	    		write2.write("<p></p><p></p><p></p><p></p> Please follow this <a href="+(char)34+ buildurl+"artifact/target/reports/"+test.timesta + ".html"+(char)34+"> LINK </a> for a full report<p>");
@@ -151,7 +161,7 @@ public String hola(){
 			write2.close();
 						
 			
-			
+		 
 		 tests.driver.quit();
 	 }
 
