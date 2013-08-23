@@ -113,6 +113,9 @@ public class mainTest {
 		 		System.out.println("--------------------------------------");
 		 		System.out.println("  Starting 2nd Iteration on failure");
 		 		System.out.println("--------------------------------------");
+		 		test.overall="PASSED";
+		 		test.result="";
+		 		test.result2="";
 		 		retry=1;
 		 		String[] options=new String[1];
 				options[0]="nothing";
