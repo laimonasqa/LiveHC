@@ -98,8 +98,12 @@ public String hola(){
 	 @After
 	 public void tearDown() throws Exception {
 		 	
+		 	
 		 	main.java.tests test = new main.java.tests();	
 		 
+		 	if(test.started==0){test.overall="FAILED";}
+		 	if(test.started!=test.finished){test.overall="FAILED";}
+		 	
 		 	String color="";
 	    	
 	    	if(test.overall.equals("FAILED")){color=(char)34+"RED"+(char)34;
@@ -138,6 +142,7 @@ public String hola(){
 	    	
 	    	if(!buildurl.equals("null")){
 	    		write2.write("<p></p><p></p><p></p><p></p> Please follow this <a href="+(char)34+ buildurl+"artifact/target/reports/"+test.timesta + ".html"+(char)34+"> LINK </a> for a full report<p>");
+	    		write2.write("<p></p><p></p><p>Console Output can be found <a href="+(char)34+ buildurl+"console"+(char)34+"> HERE </a></p>");
 	    	}else{
 	    		write2.write("<p></p><p></p><p></p><p></p> Please follow this <a href="+(char)34+ test.timesta + ".html"+(char)34+"> LINK </a> for a full report<p>");
 	    	}
