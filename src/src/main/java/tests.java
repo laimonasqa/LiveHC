@@ -268,7 +268,7 @@ public class tests {
 		//ffprofile.setAssumeUntrustedCertificateIssuer(false);
 		//driver = new FirefoxDriver(ffprofile);
 		
-		 driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		 driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
 	    //driver.get(baseUrl);
 	    driver.get(baseUrl);
 	    driver.manage().window().maximize();
@@ -704,6 +704,7 @@ public class tests {
 					driver.findElement(By.cssSelector(nt2)).sendKeys("123456");
 					driver.findElement(By.cssSelector(nt3)).clear();
 					driver.findElement(By.cssSelector(nt3)).sendKeys("10");
+					
 					
 					try{
 						driver.findElement(By.cssSelector(button)).click();

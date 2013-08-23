@@ -42,7 +42,9 @@ public class mainTest {
 	 * @throws Exception 
 	 */
 	
-public String hola(){
+	public int retry=0;
+	
+	public String hola(){
 		
 		return("Ola k ase?");
 	}
@@ -101,8 +103,22 @@ public String hola(){
 		 	
 		 	main.java.tests test = new main.java.tests();	
 		 
+		 	
+		 	
 		 	if(test.started==0){test.overall="FAILED";}
 		 	if(test.started!=test.finished){test.overall="FAILED";}
+		 	
+		 	if(test.overall.equals("FAILED")&&retry==0){
+		 		
+		 		System.out.println("--------------------------------------");
+		 		System.out.println("  Starting 2nd Iteration on failure");
+		 		System.out.println("--------------------------------------");
+		 		retry=1;
+		 		String[] options=new String[1];
+				options[0]="nothing";
+				test.setUp(options);
+		 		
+		 	}
 		 	
 		 	String color="";
 	    	
