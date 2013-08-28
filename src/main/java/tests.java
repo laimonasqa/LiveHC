@@ -437,14 +437,10 @@ public class tests {
 				System.out.println("-----------------------------------");
 				result=result+"<p>Withdrawl Link not Found<p>";
 				success=1;
-				try {
-	                
+     
 					takesc(screenshot);
 					result=result+"<p>Error Screenshot  <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
-				} catch (IOException e2) {
-					System.out.println("Screenshot Failed");
-					System.out.println("-----------------------------------");
-				}}
+				}
 				
 			}i=i+1;}
 			
@@ -549,18 +545,13 @@ public class tests {
 								System.out.println("-----------------------------------");
 								success=1;
 								result=result+"<p>Withdrawl: Button not found<P>";
-								try {
-					                
+									                
 									takesc(screenshot);
 									result=result+"<p>Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 									//System.out.println("Deposit correctly placed");
 									//result2=result2+"<td>PASS</td></tr>";
 			                
-								} catch (IOException e2) {
-									System.out.println("Screenshot Failed");
-									System.out.println("-----------------------------------");
-								}
-							
+															
 							}
 												
 						}j=j+1;
@@ -889,18 +880,12 @@ public class tests {
 					result=result+"<p>IBNDeposit:One of the fields have not been found<p>";
 					System.out.println("Field not found");
 					System.out.println("-----------------------------------");
-					try {
-		                
-						takesc(screenshot);
-						result=result+"<p>Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
-						//System.out.println("Deposit correctly placed");
-						//result2=result2+"<td>PASS</td></tr>";
-                
-					} catch (IOException e2) {
-						System.out.println("Screenshot Failed");
-						System.out.println("-----------------------------------");
-					}
-					
+				
+					takesc(screenshot);
+					result=result+"<p>Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+					//System.out.println("Deposit correctly placed");
+					//result2=result2+"<td>PASS</td></tr>";
+                										
 				}
 				
 				
@@ -958,7 +943,7 @@ public class tests {
 											if(driver.findElement(By.xpath(tid)).isDisplayed() && driver.findElement(By.xpath(tid)).getText().toLowerCase().contains("transaction id")){
 											
 											
-											try {
+											
 								                
 												takesc(screenshot);
 								                result=result+"<p>Screenshot for the deposit <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
@@ -966,28 +951,21 @@ public class tests {
 								                System.out.println("-----------------------------------");
 								    			//result2=result2+"<td>PASS</td></tr>";
 								                
-								            } catch (IOException e1) {
-								                System.out.println("Screenshot Failed");
-								                System.out.println("-----------------------------------");
-								            }
-											
+								           											
 																				
 											}else{
 											
 											System.out.println("Transaction Id not present in Receipt");
 											success=1;
 											result=result+"<p>Transaction Id not present in Receipt<p>";
-											try {
+											
 								                
 												takesc(screenshot);
 												result=result+"<p>Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 												//System.out.println("Deposit correctly placed");
 												//result2=result2+"<td>PASS</td></tr>";
 						                
-											} catch (IOException e1) {
-												System.out.println("Screenshot Failed");
-												System.out.println("-----------------------------------");
-											}
+											
 											}
 										}else{
 										
@@ -1204,7 +1182,7 @@ public class tests {
 						System.out.println("Redirection after payment does not work well");
 						System.out.println("-----------------------------------");
 						success=1;
-						result=result+"<p>Surname not present in Receipt<p>";
+						result=result+"<p>Redirection After payment did not happen<p>";
 						try {
 			                
 							takesc(screenshot);
@@ -1288,9 +1266,12 @@ public class tests {
 			
 		}else{
 			*/
+		try{
 		File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 		FileUtils.copyFile(scrFile, new File(screenshot));
-		
+		}catch(Exception e1){
+			System.out.println("Screenshot Failed");
+		}
 		//}
 		
 		//result=result+"<p>Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
@@ -1583,7 +1564,7 @@ public class tests {
 			result2=result2+"<td>FAILED</td></tr>";
 			overall="FAILED";
 			takesc(screenshot);	}
-		result=result+"<p>Error Screenshot  <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+			result=result+"<p>Error Screenshot  <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 		
 		
 		}
@@ -1730,7 +1711,8 @@ public class tests {
 						result=result+"<p>Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 					}
 						}catch(Exception e2){
-							
+							overall="FAILED";
+							result=result+"<p> ICON CHECKING FAILED <p>";
 						}
 					}else{
 						
@@ -1814,7 +1796,8 @@ public class tests {
 							result=result+"<p>Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 							
 						}}catch(Exception e2){
-							
+							overall="FAILED";
+							result=result+"<p> ICON CHECKING FAILED <p>";
 						}
 												
 					}
