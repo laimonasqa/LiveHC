@@ -1,4 +1,4 @@
-package main.java;
+//package main.java;
 
 import java.awt.*;
 import org.apache.commons.io.FileUtils;
@@ -75,6 +75,7 @@ public class tests {
   public static String overall="PASSED";
   public static int started=0; //Control Variable
   public static int finished=0;//Control Variable
+  public static String regcss=""; //will store the registration css locator for second iteration
   public static String result2="";
   public static WebDriver driver;
   private String baseUrl;
@@ -268,7 +269,7 @@ public class tests {
 		//ffprofile.setAssumeUntrustedCertificateIssuer(false);
 		//driver = new FirefoxDriver(ffprofile);
 		
-		 driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+		 driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 	    //driver.get(baseUrl);
 	    driver.get(baseUrl);
 	    driver.manage().window().maximize();
@@ -631,7 +632,7 @@ public class tests {
 							Thread.sleep(1000);
 						}	
 					
-					}catch(NoSuchElementException e1){
+					}catch(Exception e1){
 						
 					}
 					
@@ -645,7 +646,7 @@ public class tests {
 						}
 						//wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("")));
 					
-					}catch(NoSuchElementException e1){
+					}catch(Exception e1){
 						
 						
 					}
@@ -670,7 +671,7 @@ public class tests {
 						
 						}
 				
-					}catch(NoSuchElementException e1){
+					}catch(Exception e1){
 					
 						System.out.println("Error Message not found");
 						System.out.println("-----------------------------------");
@@ -679,7 +680,7 @@ public class tests {
 					
 					}
 					
-			}catch(NoSuchElementException e1){
+			}catch(Exception e1){
 				
 				System.out.println("Something wrong happens in UKASH check");
 				System.out.println("-----------------------------------");
@@ -721,7 +722,7 @@ public class tests {
 								Thread.sleep(1000);
 							}	
 						
-						}catch(NoSuchElementException e1){
+						}catch(Exception e1){
 							
 						}
 						
@@ -738,7 +739,7 @@ public class tests {
 							}
 							//wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("")));
 						
-						}catch(NoSuchElementException e1){
+						}catch(Exception e1){
 							
 							
 						}
@@ -765,7 +766,7 @@ public class tests {
 							
 							}
 					
-						}catch(NoSuchElementException e1){
+						}catch(Exception e1){
 						
 							System.out.println("Error Message not found");
 							System.out.println("-----------------------------------");
@@ -774,7 +775,7 @@ public class tests {
 						
 						}
 						
-				}catch(NoSuchElementException e1){
+				}catch(Exception e1){
 					
 					System.out.println("Something wrong happens in the check");
 					System.out.println("-----------------------------------");
@@ -786,7 +787,8 @@ public class tests {
 				
 		}
 		
-				
+		System.out.println(payment+" Communication Finished");		
+		System.out.println("-----------------------------------");
 		if(success==1){ overall="FAILED";}
 		finished=finished+1;
 		return(success);
@@ -1639,11 +1641,16 @@ public class tests {
 					if(!chkbutton.contains("//")){
 						
 						
+						try{
+							
+						
 						if(driver.findElement(By.cssSelector(chkicon)).isDisplayed()){
+							System.out.println("looking icon");
 					
 						try{
 						
 							driver.findElement(By.cssSelector(chkbutton)).click();
+							System.out.println("looking button");
 							Thread.sleep(1000);
 						
 							String source=driver.getPageSource().toLowerCase();
@@ -1723,10 +1730,13 @@ public class tests {
 						takesc(screenshot);
 						result=result+"<p>Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 					}
-					
+						}catch(Exception e2){
+							
+						}
 					}else{
 						
-						chkbutton=chkbutton.toUpperCase();
+						try{
+						//chkbutton=chkbutton.toUpperCase();
 						if(driver.findElement(By.cssSelector(chkicon)).isDisplayed()){
 							
 							try{
@@ -1803,6 +1813,8 @@ public class tests {
 							result=result+"<p> ICON Not displayed for "+chktext+" payment method</p>";
 							takesc(screenshot);
 							result=result+"<p>Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+							
+						}}catch(Exception e2){
 							
 						}
 												
@@ -2054,10 +2066,13 @@ public class tests {
 		//System.out.println(z);
 		do{
 			
+			if(!regcss.equals("")){link[z]=regcss;}
+			System.out.println(link[z]);
 			if(find==0){
 			//System.out.println(z+"======"+count);
 			try {
 			
+				
 				
 				driver.findElement(By.cssSelector(link[z]));
 				if(driver.findElement(By.cssSelector(link[z])).isDisplayed()){
@@ -2128,7 +2143,8 @@ public class tests {
 	    		
 	    		//String genmail="Daniel@hh.com";
 	    		
-				WebDriverWait wait = new WebDriverWait(driver, 30);
+					regcss=link[z];
+					WebDriverWait wait = new WebDriverWait(driver, 30);
 	    		
 	    		//System.out.println("Sigue");
 	    		System.out.println(driver.getCurrentUrl().toString());

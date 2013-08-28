@@ -1,4 +1,4 @@
-package test.java;
+//package test.java;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -28,8 +28,8 @@ import java.net.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import main.java.tests;
-import main.java.juega1;
+//import tests;
+//import juega1;
 
 
 
@@ -66,8 +66,8 @@ public class mainTest {
 		
 		
 		//System.out.println(args.length);
-		main.java.tests test = new main.java.tests();
-		main.java.juega1 test2 = new main.java.juega1();
+		tests test = new tests();
+		juega1 test2 = new juega1();
 		
 		
 		
@@ -101,7 +101,7 @@ public class mainTest {
 	 public void tearDown() throws Exception {
 		 	
 		 	
-		 	main.java.tests test = new main.java.tests();	
+		 	tests test = new tests();	
 		 
 		 	
 		 	
@@ -116,9 +116,12 @@ public class mainTest {
 		 		test.overall="PASSED";
 		 		test.result="";
 		 		test.result2="";
+		 		test.started=0;
+		 		test.finished=0;
 		 		retry=1;
 		 		String[] options=new String[1];
 				options[0]="nothing";
+				test.driver.close();
 				test.setUp(options);
 		 		
 		 	}
