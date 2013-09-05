@@ -108,8 +108,7 @@ public class tests {
 	public long timesta=new Date().getTime()/1000;
 	public String batchid; 
 	public String language;
-	
-	
+	public boolean is64bit = false;
 	public static Statement stat=null;
 	public static Statement stat2=null;
 	public static Statement stat3=null;
@@ -139,6 +138,27 @@ public class tests {
 		//file.delete();
 		//file2.delete();
 		//System.out.println(new Timestamp(date.getTime()));
+		
+		if (System.getProperty("os.name").contains("Windows")) {
+		    is64bit = (System.getenv("ProgramFiles(x86)") != null);
+		} else {
+		    is64bit = (System.getProperty("os.arch").indexOf("64") != -1);
+		}
+		
+		if(is64bit=false){
+			
+			System.out.println("------------------------");
+			System.out.println("Running on 32 bit system");
+			System.out.println("------------------------");
+			
+		}else{
+			
+			System.out.println("------------------------");
+			System.out.println("Running on 64 bit system");
+			System.out.println("------------------------");
+			
+		}
+		
 		
 		try{
 			
@@ -270,7 +290,7 @@ public class tests {
 		//ffprofile.setAssumeUntrustedCertificateIssuer(false);
 		//driver = new FirefoxDriver(ffprofile);
 		
-		 driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+		 driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
 	    //driver.get(baseUrl);
 	    driver.get(baseUrl);
 	    driver.manage().window().maximize();
@@ -419,7 +439,7 @@ public class tests {
 	    
 		result2=result2+"<tr><td>Withdrawl</td>";
 		
-		String[] wdlink = {"a.button_withdraw","#log_account_buttons a.button_withdraw"};
+		String[] wdlink = {"[qa='withdrawal']","a.button_withdraw","#log_account_buttons a.button_withdraw"};
 		String [][] wdmethod={{"input[name='withdrawalAmount']","text","10"},{"#submit > span","button",""}};
 		
 		int success=0;
@@ -588,7 +608,7 @@ public class tests {
 		System.out.println("Checking ====>"+payment+"<===== communication");
 		System.out.println("-----------------------------------");
 		
-		String mb1,mb2,uk1,uk2,uke,nt1,nt2,nt3,button,button2;
+		String mb1,mb2,uk1,uk2,uke,nt1,nt2,nt3,nte,button,button2;
 		
 		mb1="html body div#wrapper div#full_col div#main_col div#contentPanel div.innerpanelContainer div.innerpanel div#cmsPayContainer div#submitTrack form#moneybookerdepositform fieldset div input#pay_from_email.cmsPayInputField";
 		mb2="html body div#wrapper div#full_col div#main_col div#contentPanel div.innerpanelContainer div.innerpanel div#cmsPayContainer div#submitTrack form#moneybookerdepositform fieldset div input#amount.cmsPayInputField";
@@ -599,11 +619,19 @@ public class tests {
 		nt1="input[name='accountId']";
 		nt2="input[name='secureId']";
 		nt3="input[name='amount']";
+		nte="#regerrors span";
 		button="#submit > span";
 		button2="a#submit.btn";
 		String Loadmask="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/div[@class='loadmask-msg']/div";
 		Loadmask=Loadmask.toUpperCase();
 		WebDriverWait wait = new WebDriverWait(driver, 30);
+		
+		if(batchid.contains("labels")){
+			
+			uke="[qa='depositerror']";
+			nte="[qa='depositerror']";
+		
+		}
 		
 		if(payment.equals("ukash")){
 			
@@ -646,31 +674,48 @@ public class tests {
 						
 					}
 					//System.out.println("Continue");
-					try{
 					
-						String response= driver.findElement(By.cssSelector(uke)).getText();
+					try{
+						
+						String response="";
+						int it=0;
+						while(!response.contains("Technical Mistake. Please get in contact with Ukash Merchant Support")){
+							if(it>=4){break;}
+							//response= driver.findElement(By.cssSelector(uke)).getText();
+							//System.out.println(response);
+							response= driver.findElement(By.cssSelector(uke)).getText();
 						//System.out.println(response);
 				
-						if(response.contains("Technical Mistake. Please get in contact with Ukash Merchant Support")){
-						
-							//System.out.println("Neteller Commuication Confirmed");
-							result=result+"<p>UKASH Commuication Confirmed<p>";
-							System.out.println("-----------------------------------");
+							if(response.contains("Technical Mistake. Please get in contact with Ukash Merchant Support")){
+														
+								result=result+"<p>UKASH Commuication Confirmed<p>";
+								System.out.println("-----------------------------------");
 											
-						}else{
+							}else{
+								
+								success=1;
+								it=it+1;
+							
 						
+							}}
+						
+						if(success==1){
+							
 							System.out.println("UKASH Commuication Failed");
 							System.out.println("-----------------------------------");
 							result=result+"<p>UKASH Commuication Failed<p>";
-							success=1;
-						
+							result2=result2+"<td>FAILED</td></tr>";
+							
 						}
+						
+						
 				
 					}catch(Exception e1){
 					
 						System.out.println("Error Message not found");
 						System.out.println("-----------------------------------");
 						result=result+"<p>UKASH error message not found<p>";
+						result2=result2+"<td>FAILED</td></tr>";
 						success=1;
 					
 					}
@@ -681,6 +726,7 @@ public class tests {
 				System.out.println("-----------------------------------");
 				result=result+"<p>Some Field/button not found while UKASH Commuication check<p>";
 				success=1;
+				result2=result2+"<td>FAILED</td></tr>";
 			}
 				
 		
@@ -727,7 +773,7 @@ public class tests {
 							//String error="//fieldset/div[@id='regerrors']";
 							//error=error.toUpperCase();
 							
-							while(!driver.findElement(By.cssSelector("#regerrors span")).isDisplayed()){
+							while(!driver.findElement(By.cssSelector(nte)).isDisplayed()){
 								System.out.println("Waiting for error message");
 								//Thread.sleep(1000);
 								
@@ -743,29 +789,44 @@ public class tests {
 						
 							//String errmsg="//fieldset/div[@id='regerrors']";
 							//errmsg=errmsg.toUpperCase();
-							String response= driver.findElement(By.cssSelector("#regerrors span")).getText();
-							//System.out.println(response);
+							String response="";
+							int it=0;
+							while(!response.contains("No client has been found for the specified net_account variable.")){
+								if(it>=4){break;}
+								response= driver.findElement(By.cssSelector(nte)).getText();
+								//System.out.println(response);
 					
-							if(response.contains("No client has been found for the specified net_account variable.")){
+								if(response.contains("No client has been found for the specified net_account variable.")){
 							
-								//System.out.println("Neteller Commuication Confirmed");
-								result=result+"<p>Neteller Commuication Confirmed<p>";
-								System.out.println("-----------------------------------");
-												
-							}else{
+									//System.out.println("Neteller Commuication Confirmed");
+									result=result+"<p>Neteller Commuication Confirmed<p>";
+									System.out.println("-----------------------------------");
+									success=0;
+									break;
+								}else{
+								
+									success=1;
+									it=it+1;
+								
 							
+								}}
+							
+							if(success==1){
+								
 								System.out.println("Neteller Commuication Failed");
 								System.out.println("-----------------------------------");
 								result=result+"<p>Neteller Commuication Failed<p>";
-								success=1;
-							
+								result2=result2+"<td>FAILED</td></tr>";
+								
 							}
+							
 					
 						}catch(Exception e1){
 						
 							System.out.println("Error Message not found");
 							System.out.println("-----------------------------------");
 							result=result+"<p>Neteller error message not found<p>";
+							result2=result2+"<td>FAILED</td></tr>";
 							success=1;
 						
 						}
@@ -775,6 +836,7 @@ public class tests {
 					System.out.println("Something wrong happens in the check");
 					System.out.println("-----------------------------------");
 					result=result+"<p>Some Field/button not found while Neteller Commuication check<p>";
+					result2=result2+"<td>FAILED</td></tr>";
 					success=1;
 				}
 					
@@ -808,6 +870,19 @@ public class tests {
 		String surname="//div[13]/label";
 		String ttype="//div[15]/label";
 		String tid="//div[17]/label";
+		
+		if(batchid.contains("labels")){
+			
+			merchant="[qa='tmerchant']";
+			email="[qa='temail']";
+			auth="[qa='tacode']";
+			trans="[qa='ttamount']";
+			tdate="[qa='ttdate']";
+			surname="[qa='tsurname']";
+			ttype="[qa=tttype']";
+			tid="[qa='ttid']";
+			
+		}
 		//if(browser.equals("ie")){
 			//merchant=merchant.toUpperCase();
 			//email=email.toUpperCase();
@@ -819,19 +894,29 @@ public class tests {
 			//tid=tid.toUpperCase();}
 		
 		
-		String[][] paymethod ={ 	{"input[name='accountId']","458591047553","text"}, //Stage
-								{"input[name='secureId']","411392","text"},
-								{"input[name='amount']","10","text"},
-								{"#submit > span","","button"},
-								{"a#submit.btn","","button"}
+		String[][] paymethod ={	{"input[name='accountId']","458591047553","text"}, //Stage
+				{"input[name='secureId']","411392","text"},
+				{"input[name='amount']","10","text"},
+				{"#submit > span","","button"},
+				{"a#submit.btn","","button"}
+		};
 		
+								
+		if(batchid.contains("labels")){
+			
+			paymethod[0][0] ="[qa='nanumber']";
+			paymethod[1][0]="[qa='nsnumber']";
+			paymethod[2][0]="[qa='namount']";
+			paymethod[3][0]="[qa='dbutton']";
+						 
+		}
 		//String[][] paymethod ={ 	{"input[name='accountId']","453523465418","text"}, //Live
 			//				{"input[name='secureId']","664902","text"},
 				//			{"input[name='amount']","10","text"},
 					//		{"#submit > span","","button"},
 						//	{"a#submit.btn","","button"}
 		
-		};
+		//};
 		
 		String[][] arr= new String[15][3];
 		
@@ -934,6 +1019,7 @@ public class tests {
 	    			
 	    		}*/
 				
+				if(!batchid.contains("labels")){
 				if(driver.findElement(By.xpath(merchant)).isDisplayed() && driver.findElement(By.xpath(merchant)).getText().toLowerCase().contains("merchant name")){
 					
 					if(driver.findElement(By.xpath(email)).isDisplayed() && driver.findElement(By.xpath(email)).getText().toLowerCase().contains("e-mail")){
@@ -1106,7 +1192,180 @@ public class tests {
 					}
 				
 				}
-				
+				}else{ //!contains labels
+					
+					if(driver.findElement(By.cssSelector(merchant)).isDisplayed() && driver.findElement(By.cssSelector(merchant)).getText().toLowerCase().contains("merchant name")){
+						
+						if(driver.findElement(By.cssSelector(email)).isDisplayed() && driver.findElement(By.cssSelector(email)).getText().toLowerCase().contains("e-mail")){
+							
+							if(driver.findElement(By.cssSelector(auth)).isDisplayed() && driver.findElement(By.cssSelector(auth)).getText().toLowerCase().contains("authorisation")){
+								
+								if(driver.findElement(By.cssSelector(trans)).isDisplayed() && driver.findElement(By.cssSelector(trans)).getText().toLowerCase().contains("transaction amount")){
+									
+									if(driver.findElement(By.cssSelector(tdate)).isDisplayed() && driver.findElement(By.cssSelector(tdate)).getText().toLowerCase().contains("transaction date")){
+								
+										if(driver.findElement(By.cssSelector(surname)).isDisplayed() && driver.findElement(By.cssSelector(surname)).getText().toLowerCase().contains("surname")){
+										
+											if(driver.findElement(By.cssSelector(ttype)).isDisplayed() && driver.findElement(By.cssSelector(ttype)).getText().toLowerCase().contains("transaction type")){
+											
+												if(driver.findElement(By.cssSelector(tid)).isDisplayed() && driver.findElement(By.cssSelector(tid)).getText().toLowerCase().contains("transaction id")){
+												
+												
+												
+									                
+													takesc(screenshot);
+									                result=result+"<p>Screenshot for the deposit <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+									                System.out.println("Deposit correctly placed");
+									                System.out.println("-----------------------------------");
+									    			//result2=result2+"<td>PASS</td></tr>";
+									                
+									           											
+																					
+												}else{
+												
+												System.out.println("Transaction Id not present in Receipt");
+												success=1;
+												result=result+"<p>Transaction Id not present in Receipt<p>";
+												
+									                
+													takesc(screenshot);
+													result=result+"<p>tid Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+													//System.out.println("Deposit correctly placed");
+													//result2=result2+"<td>PASS</td></tr>";
+							                
+												
+												}
+											}else{
+											
+												System.out.println("Transaction Type not present in Receipt");
+												success=1;
+												result=result+"<p>Transaction Type not present in Receipt<p>";
+												
+												try {
+									                
+													takesc(screenshot);
+													result=result+"<p>ttype Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+													//System.out.println("Deposit correctly placed");
+													//result2=result2+"<td>PASS</td></tr>";
+							                
+												} catch (IOException e1) {
+													System.out.println("Screenshot Failed");
+													System.out.println("-----------------------------------");
+												}
+											
+											}
+										}else{
+										
+											System.out.println("Surname not present in Receipt");
+											success=1;
+											result=result+"<p>Surname not present in Receipt<p>";
+											try {
+								                
+												takesc(screenshot);
+												result=result+"<p>surnme Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+												//System.out.println("Deposit correctly placed");
+												//result2=result2+"<td>PASS</td></tr>";
+						                
+											} catch (IOException e1) {
+												System.out.println("Screenshot Failed");
+												System.out.println("-----------------------------------");
+											}
+										
+										}
+										
+									}else{
+									
+										System.out.println("Transaction Date not present in Receipt");
+										success=1;
+										result=result+"<p>transaction Date not present in Receipt<p>";
+										try {
+							                
+											takesc(screenshot);
+											result=result+"<p>tdate Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+											//System.out.println("Deposit correctly placed");
+											//result2=result2+"<td>PASS</td></tr>";
+					                
+										} catch (IOException e1) {
+											System.out.println("Screenshot Failed");
+											System.out.println("-----------------------------------");
+										}
+									
+									}
+								}else{
+								
+									System.out.println("Transaction Amount not present in Receipt");
+									success=1;
+									result=result+"<p>Transaction Amount not present in Receipt<p>";
+									try {
+						                
+										takesc(screenshot);
+										result=result+"<p>tamo Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+										//System.out.println("Deposit correctly placed");
+										//result2=result2+"<td>PASS</td></tr>";
+				                
+									} catch (IOException e1) {
+										System.out.println("Screenshot Failed");
+										System.out.println("-----------------------------------");
+									}
+								
+								}
+								
+							}else{
+							
+								System.out.println("Authorisation Code not present in Receipt");
+								success=1;
+								result=result+"<p>Authorisation Code not present in Receipt<p>";
+								try {
+					                
+									takesc(screenshot);
+									result=result+"<p>authcode Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+									//System.out.println("Deposit correctly placed");
+									//result2=result2+"<td>PASS</td></tr>";
+			                
+								} catch (IOException e1) {
+									System.out.println("Screenshot Failed");
+									System.out.println("-----------------------------------");
+								}
+							
+							}
+							
+						}else{
+						
+							System.out.println("e-mail not present in Receipt");
+							success=1;
+							result=result+"<p>e-mail not present in Receipt<p>";
+							try {
+				                
+								takesc(screenshot);
+								result=result+"<p>temail Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+								//System.out.println("Deposit correctly placed");
+								//result2=result2+"<td>PASS</td></tr>";
+		                
+							} catch (IOException e1) {
+								System.out.println("Screenshot Failed");
+								System.out.println("-----------------------------------");
+							}
+						
+						}
+					
+					}else{
+					
+						System.out.println("Merchant Name not present in Receipt");
+						success=1;
+						result=result+"<p>Merchant Name not present in Receipt<p>";
+						try {
+			                
+							takesc(screenshot);
+							result=result+"<p>mname Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+							//System.out.println("Deposit correctly placed");
+							//result2=result2+"<td>PASS</td></tr>";
+	                
+						} catch (IOException e1) {
+							System.out.println("Screenshot Failed");
+							System.out.println("-----------------------------------");
+						}
+					}
+				}
 				}catch(Exception e1){
 				
 					if(i==paymethod.length){
@@ -1130,7 +1389,14 @@ public class tests {
 				}
 				
 				try{
-					driver.findElement(By.cssSelector(paymethod[i][0])).click();
+					
+					if(!batchid.contains("labels")){
+						driver.findElement(By.cssSelector(paymethod[i][0])).click();
+					}else{
+						driver.findElement(By.cssSelector("[qa='tplaynow']")).click();
+						//driver.findElement(By.cssSelector("[id='submit']")).click();
+					}
+					
 					System.out.println("Play Now Button Clicked");
 					System.out.println("-----------------------------------");
 					
@@ -1301,15 +1567,16 @@ public class tests {
 		String testtoget="";
 		String testid="";
 		
-		result=result+"<p><h3>" + l2test + " IBN L2 TEST</h3></p><p></p>";
-		
+		//result=result+"<p><h3>" + l2test + " IBN L2 TEST</h3></p><p></p>";
+		result=result+"<p><h3>IBN L2 TEST</h3></p><p></p>";
 		String what="";
 		int success=0;
 		//System.out.println(l2test);
 		stat3= con.createStatement();
 		stat4=con.createStatement();
 		stat=con.createStatement();
-		result2=result2+"<tr><td>"+ l2test+"</td>";
+		//result2=result2+"<tr><td>"+ l2test+"</td>";
+		result2=result2+"<tr><td>L2 Step 1 Test</td>";
 		
 		l2rs1= stat3.executeQuery("select * from tests where testid='"+l2test+"'");
 		l2rs1.first();
@@ -1317,7 +1584,7 @@ public class tests {
 		String testk=l2rs1.getString("testkind");
 		//System.out.println(testk);
 				
-		if(testk.equals("ibnl2chk")){
+		if(testk.equals("ibnl2chk")||testk.equals("l2paycheck")){
 			
 			stat3.clearBatch();
 			l2rs1= stat3.executeQuery("select * from ibnl2paymentcheck where testid='"+l2test+"'");
@@ -1381,6 +1648,7 @@ public class tests {
 		Thread.sleep(1000);
 		
 		//driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		
 		
 		WebDriverWait wait = new WebDriverWait(driver, 30);
 		try{
@@ -1536,12 +1804,12 @@ public class tests {
 		}
 		
 		try{
-		wait.until(ExpectedConditions.textToBePresentInElement(By.cssSelector("BODY"),logname));
+		wait.until(ExpectedConditions.textToBePresentInElement(By.cssSelector("[id='the_usernameright']"),logname));
 		}catch(Exception e){
 			
 		}
 		
-		if(driver.getPageSource().contains(logname)){
+		if(driver.findElement(By.cssSelector("[id='the_usernameright']")).getText().equals(logname)){
 			
 			
 			ibndeposit(paymentcss,logname);
@@ -1581,6 +1849,7 @@ public class tests {
 		
 		if(what.equals("checkonly") && success==0){
 			
+			result2=result2+"<td>PASS</td></tr>";
 			
 			//Start payment methods present and functional
 			
@@ -1588,7 +1857,23 @@ public class tests {
 			//String fname,sname,tname,foname,finame,siname;
 			String chkicon,chkbutton,chktext;
 			
-			l2rs3=stat2.executeQuery("select * from ibnl2paymentcheck where testid='" + testid +"'");
+			String testfbatch="";
+			String kindtest="";
+			l2rs2=stat.executeQuery("select * from batch where batchid='"+batchid+"'");
+			l2rs2.beforeFirst();
+			
+			while(l2rs2.next()){
+				testfbatch=l2rs2.getString("testid");
+				System.out.println(testfbatch);
+				l2rs1=stat3.executeQuery("select * from tests where testid='" + testfbatch +"'");
+				l2rs1.first();
+				kindtest=l2rs1.getString("testkind");
+				System.out.println(kindtest);
+				
+			if(kindtest.equals("l2paycheck")){
+			
+			result2=result2+"<tr><td>"+testfbatch+"</td>";
+			l2rs3=stat2.executeQuery("select * from ibnl2paymentcheck where testid='" + testfbatch +"'");
 			l2rs3.beforeFirst();
 			
 			while(l2rs3.next()){
@@ -1666,6 +1951,7 @@ public class tests {
 									if(success==0){
 									result=result+"<p>"+chktext+" Payment OK</p>";
 									result=result+"<p>Screenshot for this payment <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+									result2=result2+"<td>PASS<td></tr>";
 									}else{
 									result=result+"<p>"+chktext+" Payment FAILED</p>";
 									result=result+"<p>payfail Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
@@ -1680,6 +1966,7 @@ public class tests {
 									overall="FAILED";
 									success=1;
 									result=result+"<p> User Name Not displayed in "+chktext+" payment method</p>";
+									result2=result2+"<td>FAILED<td></tr>";
 									takesc(screenshot);
 									result=result+"<p>pchklogname Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";}
 								
@@ -1692,6 +1979,7 @@ public class tests {
 								overall="FAILED";
 								success=1;
 								result=result+"<p>Payment Name Not displayed in "+chktext+" payment method</p>";
+								result2=result2+"<td>FAILED<td></tr>";
 								takesc(screenshot);
 								result=result+"<p>pcheckpname Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 							}
@@ -1706,6 +1994,7 @@ public class tests {
 							overall="FAILED";
 							success=1;
 							result=result+"<p> Depossit button failed in "+chktext+" payment method</p>";
+							result2=result2+"<td>FAILED<td></tr>";
 							takesc(screenshot);
 							result=result+"<p>pchkdbutt Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 						}
@@ -1717,12 +2006,14 @@ public class tests {
 						System.out.println("Icon not displayed");
 						System.out.println("-----------------------------------");
 						result=result+"<p>ICON Not displayed for "+chktext+" payment method</p>";
+						result2=result2+"<td>FAILED<td></tr>";
 						takesc(screenshot);
 						result=result+"<p>pchkicon Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 					}
 						}catch(Exception e2){
 							overall="FAILED";
 							result=result+"<p> ICON CHECKING FAILED <p>";
+							result2=result2+"<td>FAILED<td></tr>";
 							success=1;
 							takesc(screenshot);
 							result=result+"<p>pchkicon2 Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
@@ -1757,6 +2048,7 @@ public class tests {
 										//result2=result2+"<td>PASS</td></tr>";
 										screenshot = "target/screenshots/" + chktext + timesta + ".png";
 										
+										result2=result2+"<td>PASS<td></tr>";
 										takesc(screenshot);
 										result=result+"<p>Screenshot for this payment <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 
@@ -1770,6 +2062,7 @@ public class tests {
 										overall="FAILED";
 										success=1;
 										result=result+"<p> User Name Not displayed in "+chktext+" payment method</p>";
+										result2=result2+"<td>FAILED<td></tr>";
 										takesc(screenshot);
 										result=result+"<p>logname Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 									}
@@ -1782,6 +2075,7 @@ public class tests {
 									overall="FAILED";
 									success=1;
 									result=result+"<p> Payment Name Not displayed in "+chktext+" payment method</p>";
+									result2=result2+"<td>FAILED<td></tr>";
 									takesc(screenshot);
 									result=result+"<p>payname Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 								}
@@ -1796,6 +2090,7 @@ public class tests {
 								overall="FAILED";
 								success=1;
 								result=result+"<p> Deposit Button Failed in "+chktext+" payment method</p>";
+								result2=result2+"<td>FAILED<td></tr>";
 								takesc(screenshot);	
 								result=result+"<p>depbutt Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 							}
@@ -1807,12 +2102,14 @@ public class tests {
 							System.out.println("Payment ICON not displayed");
 							System.out.println("-----------------------------------");
 							result=result+"<p> ICON Not displayed for "+chktext+" payment method</p>";
+							result2=result2+"<td>FAILED<td></tr>";
 							takesc(screenshot);
 							result=result+"<p>payicon Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
 							
 						}}catch(Exception e2){
 							overall="FAILED";
 							result=result+"<p> ICON CHECKING FAILED <p>";
+							result2=result2+"<td>FAILED<td></tr>";
 						}
 												
 					}
@@ -1838,9 +2135,19 @@ public class tests {
 						}
 				}
 		
-			driver.navigate().back();
-			
+			if(batchid.contains("labels")){
+			try{
+				driver.findElement(By.cssSelector("[qa='paymentback']")).click();
+				driver.findElement(By.cssSelector("[id='paymentLink1']")).click();
+			}catch(Exception e23){
+				
 			}
+			
+			}else
+				
+				driver.navigate().back();
+			
+			}}}
 			
 			//System.out.println(success);
 		}
@@ -1849,7 +2156,7 @@ public class tests {
 				System.out.println("-----------------------------------");
 				System.out.println("IBN L2 Step 2 Completed");
 				System.out.println("-----------------------------------");
-				result2=result2+"<td>PASS</td></tr>";
+				//result2=result2+"<td>PASS</td></tr>";
 				result=result+"<p>L2 Step2 Successful<p>";
 				
 			}else{
