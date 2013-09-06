@@ -604,10 +604,10 @@ public class tests {
 	
 	public int paymenterrorcheck(String payment,int success) throws Exception{
 		
+		success=0;
 		started=started+1;
 		System.out.println("Checking ====>"+payment+"<===== communication");
 		System.out.println("-----------------------------------");
-		
 		String mb1,mb2,uk1,uk2,uke,nt1,nt2,nt3,nte,button,button2;
 		
 		mb1="html body div#wrapper div#full_col div#main_col div#contentPanel div.innerpanelContainer div.innerpanel div#cmsPayContainer div#submitTrack form#moneybookerdepositform fieldset div input#pay_from_email.cmsPayInputField";
@@ -630,6 +630,7 @@ public class tests {
 			
 			uke="[qa='depositerror']";
 			nte="[qa='depositerror']";
+			
 		
 		}
 		
@@ -640,6 +641,19 @@ public class tests {
 				driver.findElement(By.cssSelector(uk1)).sendKeys("6337180355029426806");
 				driver.findElement(By.cssSelector(uk2)).clear();
 				driver.findElement(By.cssSelector(uk2)).sendKeys("200");
+				
+				try{
+					
+					wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(button)));
+					
+				}catch(Exception e){
+					
+					try{
+						wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(button2)));
+					}catch(Exception e1){
+						
+					}
+				}
 				
 				try{
 					driver.findElement(By.cssSelector(button)).click();
@@ -683,6 +697,7 @@ public class tests {
 							if(it>=4){break;}
 							//response= driver.findElement(By.cssSelector(uke)).getText();
 							//System.out.println(response);
+							wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(nte)));
 							response= driver.findElement(By.cssSelector(uke)).getText();
 						//System.out.println(response);
 				
@@ -747,6 +762,18 @@ public class tests {
 					driver.findElement(By.cssSelector(nt3)).clear();
 					driver.findElement(By.cssSelector(nt3)).sendKeys("10");
 					
+					try{
+						
+						wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(button)));
+						
+					}catch(Exception e){
+						
+						try{
+							wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(button2)));
+						}catch(Exception e1){
+							
+						}
+					}
 					
 					try{
 						driver.findElement(By.cssSelector(button)).click();
@@ -793,8 +820,9 @@ public class tests {
 							int it=0;
 							while(!response.contains("No client has been found for the specified net_account variable.")){
 								if(it>=4){break;}
+								wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(nte)));
 								response= driver.findElement(By.cssSelector(nte)).getText();
-								//System.out.println(response);
+								System.out.println(response);
 					
 								if(response.contains("No client has been found for the specified net_account variable.")){
 							
@@ -986,6 +1014,7 @@ public class tests {
 			if(paymethod[i][2].equals("button")){
 				
 				try{
+				
 				
 				driver.findElement(By.cssSelector(paymethod[i][0])).click();
 				System.out.println("Deposit button clicked");
