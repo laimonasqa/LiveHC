@@ -3346,11 +3346,32 @@ public class tests {
     				
 	    		}
 	    		
-	    		try{
+	    		/*try{
 	    			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(realbutton)));
 	    		}catch(Exception e){
 	    			success=1;
+	    		}*/
+	    		
+	    		int j=0;
+	    		
+	    		while(j<4){
+	    			
+	    			try{
+	    			if(driver.findElement(By.cssSelector(realbutton)).isDisplayed()){
+	    				
+	    				break;
+	    				
+	    			}else{
+	    				
+	    				Thread.sleep(1000);
+	    				j++;
+	    				
+	    			}
+	    			}catch(Exception e1){
+	    				
+	    			}
 	    		}
+	    		
 	    		String genlogin="mrt"+timesta;
 	    		//genlogin="okbingo7";
 	    		Thread.sleep(1000);
