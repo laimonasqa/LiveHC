@@ -178,10 +178,10 @@ public class tests {
 		stat2= con.createStatement();
 		
 		System.out.println("-----------------------------------");
-		System.out.println("Automation Application Rev 0.019");
+		System.out.println("Automation Application Rev 0.020");
 		System.out.println("-----------------------------------");
 		
-		System.out.println("Now Adquiring Batch from Database");
+		System.out.println("Now Acquiring Batch from Database");
 		
 		
 		rs= stat.executeQuery("select * from gotest"); //execute sql query
@@ -192,7 +192,7 @@ public class tests {
 		batchid=(rs.getString("batchid"));} //read from recordset
 		System.out.println("Batch successfully Adquired====>" + batchid);
 		System.out.println("-----------------------------------");
-		System.out.println("Adquiring Data from Batch");
+		System.out.println("Acquiring Data from Batch");
 		System.out.println("-----------------------------------");
 		//System.out.println(rs.getString("batchid"));
 		//System.out.println(batchid);
@@ -278,6 +278,7 @@ public class tests {
 			
 		}else{
 			
+			browser="firefox";
 			driver = new FirefoxDriver();
 		}
 		
@@ -300,14 +301,22 @@ public class tests {
 	    	
 	    }
 	    
-	    String source=driver.getPageSource();
-	    System.out.println("Adquiring Site Language");
-	    System.out.println("-----------------------------------");
+	    language="null";
+	    while(language.equals("null")){
+	    	
+	    	String source=driver.getPageSource();
+	    	System.out.println("Acquiring Site Language");
+	    	System.out.println("-----------------------------------");
 	    
-	    if (source.contains("ontact")||source.contains("esponsible")){ language="english";}
-	    if (source.contains("ontakt")){ language="norwegian";}
-	    if (source.contains("ö")){ language="swedish";}
+	    	if (source.contains("ontact")||source.contains("esponsible")){ language="english";}
+	    	if (source.contains("ontakt")){ language="norwegian";}
+	    	if (source.contains("ö")){ language="swedish";}
 	    
+	    	if(language.equals(null)){
+	    		driver.navigate().refresh();
+	    	}
+	    
+	    }
 	    
 	    System.out.println("Site Language=="+language);
 	    System.out.println("-----------------------------------");
@@ -340,7 +349,7 @@ public class tests {
 		String header="<p><FONT COLOR="+(char)34+"black"+(char)34+">\n------------------------------------------------------------------------------------------</p>\n\n<strong>BATCH ID=" + batchid + "<p><p>URL= " + baseUrl + "<p><p>Date and Time:"+date+"</p><p></p><p>Browser=" + browser + "</FONT></strong></p>";
 		result=result+header;
 		result2=result2+header;
-		System.out.println("Adquiring tests from batch");
+		System.out.println("Acquiring tests from batch");
 	    System.out.println("-----------------------------------");
 		
 		while(s != n){
@@ -440,7 +449,21 @@ public class tests {
 		result2=result2+"<tr><td>Withdrawl</td>";
 		
 		String[] wdlink = {"[qa='withdrawal']","a.button_withdraw","#log_account_buttons a.button_withdraw"};
-		String [][] wdmethod={{"input[name='withdrawalAmount']","text","100"},{"[id='submit']","button",""}};
+		
+		
+		String [][] wdmethod= new String [6][3];
+		
+		if(paymentcss.toLowerCase().contains("neteller")){
+		
+			wdmethod[0][0]="input[name='withdrawalAmount']";
+			wdmethod[0][1]="text";
+			wdmethod[0][2]="100";
+			wdmethod[1][0]="[id='submit']";
+			wdmethod[1][1]="button";
+			wdmethod[1][2]="";
+			
+		}
+		
 		
 		if(language.equals("english")){
 			
@@ -482,7 +505,7 @@ public class tests {
 					while(j<=wdmethod.length-1){
 					
 						//System.out.println(wdmethod.length);
-						
+					  if(!wdmethod.equals(null)){
 						if(wdmethod[j][1].equals("text")){
 						
 							try{
@@ -545,11 +568,13 @@ public class tests {
 										//System.out.println("Alert not present");
 									}
 							
-									if((driver.getCurrentUrl().contains("lobby")||driver.getCurrentUrl().contains("home")) && driver.findElement(By.cssSelector("[id='the_usernameright']")).getText().equals(logname)){
+									try{
+									
+										if((driver.getCurrentUrl().contains("lobby")||driver.getCurrentUrl().contains("home")) && driver.findElement(By.cssSelector("[id='the_usernameright']")).getText().equals(logname)){
 								
 										System.out.println("Withdrawl complete and user correctly redirected to lobby");
 										System.out.println("-----------------------------------");
-								
+																		
 										
 										try {
 					                
@@ -562,14 +587,19 @@ public class tests {
 											System.out.println("Screenshot Failed");
 											System.out.println("-----------------------------------");
 										}
-								
+										
+										break;
+									
+									
 									}else{
 								
 										System.out.println("Redirection failed");
 										System.out.println("-----------------------------------");
 										success=1;
 									}
-														
+									}catch(Exception e21){
+										
+									}					
 							}catch(Exception e1){
 							
 								System.out.println("Withdrawl button not found");
@@ -586,7 +616,7 @@ public class tests {
 							}
 												
 						}j=j+1;
-					}
+					}}
 										
 				}
 				
@@ -1386,14 +1416,14 @@ public class tests {
 			transidtxt="transaksjons id";
 		}
 		
-	System.out.println(merchtxt);
+	/*System.out.println(merchtxt);
 	System.out.println(emailtxt);
 	System.out.println(autcodtxt);
 	System.out.println(transamtxt);
 	System.out.println(transdattxt);
 	System.out.println(surnatxt);
 	System.out.println(trantytxt);
-	System.out.println(transidtxt);
+	System.out.println(transidtxt);*/
 
 	
 		
@@ -1410,14 +1440,14 @@ public class tests {
 			
 		//}
 		
-		System.out.println(merchant);
+		/*System.out.println(merchant);
 		System.out.println(email);
 		System.out.println(auth);
 		System.out.println(trans);
 		System.out.println(tdate);
 		System.out.println(surname);
 		System.out.println(ttype);
-		System.out.println(tid);
+		System.out.println(tid);*/
 		
 		//if(browser.equals("ie")){
 			//merchant=merchant.toUpperCase();
@@ -1429,13 +1459,26 @@ public class tests {
 			//ttype=ttype.toUpperCase();
 			//tid=tid.toUpperCase();}
 		
+		String[][] paymethod = new String [5][3];
 		
-		String[][] paymethod ={	{"input[name='accountId']","458591047553","text"}, //Stage
-				{"input[name='secureId']","411392","text"},
-				{"input[name='amount']","100","text"},
-				{"#submit > span","","button"},
-				{"a#submit.btn","","button"}
-		};
+		if(paymentcss.toLowerCase().contains("neteller")){
+		
+		paymethod[0][0]="input[name='accountId']";
+		paymethod[0][1]="458591047553";
+		paymethod[0][2]="text"; //Stage
+		paymethod[1][0]="input[name='secureId']";
+		paymethod[1][1]="411392";
+		paymethod[1][2]="text";
+		paymethod[2][0]="input[name='amount']";
+		paymethod[2][1]="100";
+		paymethod[2][2]="text";
+		paymethod[3][0]="#submit > span";
+		paymethod[3][1]="";
+		paymethod[3][2]="button";
+		paymethod[4][0]="a#submit.btn";
+		paymethod[4][1]="";
+		paymethod[4][2]="button";
+		
 		
 								
 		//if(batchid.contains("labels")){
@@ -1466,15 +1509,16 @@ public class tests {
 						//	{"a#submit.btn","","button"}
 		
 		//};
+		}//if paymentcss contains neteller
 		
-		String[][] arr= new String[15][3];
+		/*String[][] arr= new String[15][3];
 		
 		arr[0][0]="hola";
 		arr[0][1]="k";
 		arr[0][2]="ase?";
 		arr[1][0]="Pepe";
 		arr[1][1]="q";
-		arr[1][2]="toma?";
+		arr[1][2]="toma?";*/
 		
 		WebDriverWait wait = new WebDriverWait(driver, 30);
 		
@@ -1569,6 +1613,11 @@ public class tests {
 	    			
 	    		}*/
 				
+				takesc(screenshot);
+                result=result+"<p>Screenshot for the deposit <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+                System.out.println("Deposit correctly placed");
+                System.out.println("-----------------------------------");
+                
 				if(!batchid.contains("labels")){
 				if(driver.findElement(By.xpath(merchant)).isDisplayed() && driver.findElement(By.xpath(merchant)).getText().toLowerCase().contains(merchtxt)){
 					
@@ -1589,10 +1638,7 @@ public class tests {
 												
 											
 								                
-												takesc(screenshot);
-								                result=result+"<p>Screenshot for the deposit <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
-								                System.out.println("Deposit correctly placed");
-								                System.out.println("-----------------------------------");
+												
 								    			//result2=result2+"<td>PASS</td></tr>";
 								                
 								           											
@@ -2116,6 +2162,7 @@ public class tests {
 		//System.out.println(l2test);
 		String testtoget="";
 		String testid="";
+		String paytest="";
 		
 		//result=result+"<p><h3>" + l2test + " IBN L2 TEST</h3></p><p></p>";
 		result=result+"<p><h3>IBN L2 TEST</h3></p><p></p>";
@@ -2147,12 +2194,36 @@ public class tests {
 			//System.out.println(testid);
 		}
 			
+		paymentcss="[qa='netellerdeposit']";
+				
 		if(testk.equals("ibnl2str")){
+			
+			
+			l2rs2=stat.executeQuery("select testid from batch where batchid='" + batchid +"' and testid like '%pay%'");
+			
+			try{
+			
+				l2rs2.first();
+				paytest=l2rs2.getString("testid");
+
+				if(paytest.toLowerCase().contains("neteller")){
+					
+					paymentcss="[qa='netellerdeposit']";
+					
+				}
+				
+				
+			}catch(Exception e){
+			
+				System.out.println("There is no payment test");
+			
+			}
 			
 			testid=l2rs1.getString("testid");
 			l2rs2=stat.executeQuery("select * from ibnl2straight where testid='" + testid  +"'");
 			l2rs2.first();
 			what="YES";
+			
 			//System.out.println(testid);
 			
 		}
@@ -2160,7 +2231,7 @@ public class tests {
 		//Get all the data from database
 		
 		//phonecss="input[name='newPlayer.address.homePhone']";
-		System.out.println("Adquiring IBN L2 Commom data");
+		System.out.println("Acquiring IBN L2 Commom data");
 		System.out.println("-----------------------------------");
 		phonecss=l2rs2.getString("phone");
 		phonecss=phonecss.replaceAll("¬","'");
@@ -2183,8 +2254,8 @@ public class tests {
 		nextbuttoncss=l2rs2.getString("nextbutton");
 		nextbuttoncss=nextbuttoncss.replaceAll("¬","'");
 		//paymentcss="#netellerButton";
-		paymentcss=l2rs2.getString("payment");
-		paymentcss=paymentcss.replaceAll("¬","'");
+		//paymentcss=l2rs2.getString("payment");
+		//paymentcss=paymentcss.replaceAll("¬","'");
 		System.out.println("IBN L2 Commom data adquired");
 		System.out.println("-----------------------------------");
 		
@@ -2207,7 +2278,26 @@ public class tests {
 			
 		}
 		
-		while(!driver.getCurrentUrl().contains("#")){
+		int count=0;
+		String paystring ="";
+		if(language.equals("english")){
+			
+			paystring="payment";
+		}
+		
+		if(language.equals("norwegian")){
+			
+			paystring="betalingsmåte";
+		}
+		
+		if(language.equals("swedish")){
+			
+			paystring="BETALNINGSMETODER";
+		}
+		
+		paystring=paystring.toLowerCase();
+		
+		do{
 		try{
 			
 			driver.findElement(By.cssSelector(phonecss)).clear();
@@ -2308,7 +2398,11 @@ public class tests {
 			result=result+"<p> Next Button Failed</p>";
 		}
 		
-		}//while page not contains # (That means that L2 Step1 is finished)
+		Thread.sleep(1000);
+		count++;
+		if(count==4){break;}
+		
+		}while(!driver.getPageSource().toLowerCase().contains(paystring));//while page not contains # (That means that L2 Step1 is finished)
 		//if(overall.equals("FAILED")){result2=result2+"<td>FAILED</td></tr>";
 		//overall="FAILED";}
 		
@@ -2316,7 +2410,7 @@ public class tests {
 		System.out.println("-----------------------------------");
 		System.out.println("L2 Step1 Completed");
 		System.out.println("-----------------------------------");
-		
+		result2=result2+"<td>PASS</td></tr>";
 		if(success==1){
 		
 		System.out.println("-----------------------------------");
@@ -2333,6 +2427,13 @@ public class tests {
 				
 		if (what.equals("YES") && success==0){
 		
+		
+			System.out.println("------------------------");
+			System.out.println("Starting "+paytest+" Payment and withdrawal test");
+			System.out.println("------------------------");
+			result2=result2+"<tr><td>"+paytest+"</td>";
+			
+			
 		try{
 			
 			wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(paymentcss)));
@@ -2402,7 +2503,7 @@ public class tests {
 		
 		if(what.equals("checkonly") && success==0){
 			
-			result2=result2+"<td>PASS</td></tr>";
+			//result2=result2+"<td>PASS</td></tr>";
 			
 			//Start payment methods present and functional
 			
@@ -2464,6 +2565,7 @@ public class tests {
 				result=result+"<p>"+chktext+" Payment Method Checking<p>";
 				result=result+"<p>-----------------------------<p>";
 				
+				System.out.println(chkbutton);
 				try{
 				
 					if(!chkbutton.contains("//")){
@@ -2475,12 +2577,50 @@ public class tests {
 							if(driver.findElement(By.cssSelector(chkicon)).isDisplayed()){
 							System.out.println("looking icon");
 					
-						try{
+								try{
 						
-							driver.findElement(By.cssSelector(chkbutton)).click();
-							System.out.println("looking button");
-							Thread.sleep(1000);
-						
+									
+									System.out.println("looking button");
+									Thread.sleep(1000);
+									int j=0;
+									
+									
+									while(j<=5){
+										
+										driver.findElement(By.cssSelector(chkbutton)).click();
+										
+										try{
+										
+											if(!driver.findElement(By.cssSelector("[qa='dbutton']")).isDisplayed()){
+											
+												try{
+																								
+													driver.findElement(By.cssSelector(chkbutton)).click();
+											
+												}catch(Exception e21){
+												
+													System.out.println("Deposit button not reachable");
+												}
+										
+											}else{
+												break;
+											}
+									
+									
+										}catch(Exception e40){
+											System.out.println("deposit button not in ... try("+j+")");
+											driver.navigate().refresh();
+											j++;
+											Thread.sleep(1000);
+										}
+									}
+									
+							
+							System.out.println("In payment page");
+								
+
+
+							
 							String source=driver.getPageSource().toLowerCase();
 							chktext=chktext.toLowerCase();
 							if(source.contains(chktext)){
@@ -2690,15 +2830,28 @@ public class tests {
 		
 			//if(batchid.contains("labels")){
 			
+				int p=0;
+				try{
+				while(driver.findElement(By.cssSelector("[qa='dbutton']")).isDisplayed()){
 				try{
 				
 				driver.findElement(By.cssSelector("[qa='paymentback']")).click();
+				System.out.println("looking for correct change card url");
 				
-				
-				
-			}catch(Exception e23){
-				
-			}
+				p++;
+				System.out.println(p);
+				if(p>=6){
+					
+					driver.navigate().back();
+					break;
+				}
+				}catch(Exception e23){
+					System.out.println("Still not");
+					System.out.println(driver.getCurrentUrl());
+				}}
+				}catch(Exception e){
+					System.out.println("ok");
+				}
 			
 			/*}else
 				
@@ -3095,7 +3248,12 @@ public class tests {
 	    		}catch(Exception e){
 	    			success=1;
 	    		}*/
+	    		try{
 	    		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(next)));
+	    		
+	    		}catch(Exception e10){
+	    			
+	    		}
 	    		String genmail="QAautomation"+timesta+"@gtech.com";
 	    		try{
 	    		driver.findElement(By.cssSelector(email)).clear(); 
@@ -3327,10 +3485,12 @@ public class tests {
 	    				}
 	    				String screenname=genlogin.replace("mrt", "");
 	    			
-	    				driver.findElement(By.cssSelector(screen)).clear(); 
-	    				driver.findElement(By.cssSelector(screen)).sendKeys(screenname); //Handle Screen name
-	    				driver.findElement(By.cssSelector(enterbutton)).click();
-	    				
+	    				while(driver.findElement(By.cssSelector(screen)).isDisplayed()){
+	    					driver.findElement(By.cssSelector(screen)).clear(); 
+	    					driver.findElement(By.cssSelector(screen)).sendKeys(screenname); //Handle Screen name
+	    					driver.findElement(By.cssSelector(enterbutton)).click();
+	    					Thread.sleep(3000);
+	    				}
 	    			}catch (Exception e){
 	    			
 	    				//System.out.println("No screen name required");
@@ -3338,6 +3498,7 @@ public class tests {
 	    				
 	    			
 	    			}
+	    			
 	    			
 	    			
     				//result=result+"<p> Click on the screenshot to see it larger <a href=../"+screenshot+"><img SRC=../"+screenshot+" width=100 height=100></a><p>";
