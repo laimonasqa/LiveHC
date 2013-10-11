@@ -2258,7 +2258,7 @@ public class tests {
 		//paymentcss=paymentcss.replaceAll("¬","'");
 		System.out.println("IBN L2 Commom data adquired");
 		System.out.println("-----------------------------------");
-		
+		String Loadmask="/html/body/div[@id='wrapper']/div[@id='full_col']/div[@id='main_col']/div[@id='contentPanel']/div[@class='innerpanelContainer']/div[@class='innerpanel']/div[@id='cmsPayContainer']/form[@id='netellerdepositform']/div[@class='loadmask-msg']/div";
 		phone="11111111111";
 		street="QA street";			//Default Values
 		house="QA Number";
@@ -2400,6 +2400,19 @@ public class tests {
 		
 		Thread.sleep(1000);
 		count++;
+		try{
+		
+			if(driver.findElement(By.xpath(Loadmask)).isDisplayed()){
+			
+				break;
+				
+			}
+		}
+		
+		catch(Exception e21){
+			
+		}
+		
 		if(count==4){break;}
 		
 		}while(!driver.getPageSource().toLowerCase().contains(paystring));//while page not contains # (That means that L2 Step1 is finished)
