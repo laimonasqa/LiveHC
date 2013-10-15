@@ -3478,7 +3478,14 @@ public class tests {
     		
 	    		
 	    		if(l2present.equals("YES")||l2present.equals("checkonly")){
-	    			driver.findElement(By.cssSelector(realbutton)).click();
+	    			try{
+	    				
+	    				driver.findElement(By.cssSelector(realbutton)).click();
+	    				
+	    			}catch(Exception e12){
+	    				
+	    			}
+	    			
 	    			if(success==0){
 	    				System.out.println("L1 Step2 Completed");
 	    				System.out.println("-----------------------------------");
