@@ -31,9 +31,11 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
 import java.awt.image.BufferedImage;
@@ -178,7 +180,7 @@ public class tests {
 		stat2= con.createStatement();
 		
 		System.out.println("-----------------------------------");
-		System.out.println("Automation Application Rev 0.020");
+		System.out.println("Automation Application Rev 0.021");
 		System.out.println("-----------------------------------");
 		
 		System.out.println("Now Acquiring Batch from Database");
@@ -445,7 +447,7 @@ public class tests {
 		String screenshot = "target/screenshots/withdrawl" + timesta + ".png";
 		System.out.println("Launching Withdrawl Test");
 	    System.out.println("-----------------------------------");
-	    
+	    String amount="100";
 		result2=result2+"<tr><td>Withdrawl</td>";
 		
 		String[] wdlink = {"[qa='withdrawal']","a.button_withdraw","#log_account_buttons a.button_withdraw"};
@@ -462,14 +464,43 @@ public class tests {
 			wdmethod[1][1]="button";
 			wdmethod[1][2]="";
 			
+			if(language.equals("english")){
+				
+				wdmethod[0][2]="10";
+			}
+
 		}
 		
-		
-		if(language.equals("english")){
+		if(paymentcss.toLowerCase().contains("paysafe")){
 			
-			wdmethod[0][2]="10";
+			wdmethod[0][0]="[name='bankName']";
+			wdmethod[0][1]="text";
+			wdmethod[0][2]="Automation";
+			wdmethod[1][0]="[name='accountName']";
+			wdmethod[1][1]="text";
+			wdmethod[1][2]="Automation";
+			wdmethod[2][0]="[name='accountNumber']";
+			wdmethod[2][1]="text";
+			wdmethod[2][2]="123456";
+			wdmethod[3][0]="[name='bicCode']";
+			wdmethod[3][1]="text";
+			wdmethod[3][2]="handsess";
+			wdmethod[4][0]="[name='ibanNumber']";
+			wdmethod[4][1]="text";
+			wdmethod[4][2]="12345678";
+			wdmethod[5][0]="[id='submit']";
+			wdmethod[5][1]="button";
+			wdmethod[5][2]="";
+			
+			if(language.equals("english")){
+				
+				amount="10";
+			}
+			
 		}
 		
+		
+				
 		int success=0;
 		int i=0;
 		
@@ -545,6 +576,49 @@ public class tests {
 								//System.out.println("Withdrawl button found and clicked");
 							
 								Thread.sleep(1000);
+								
+								if(paymentcss.toLowerCase().contains("paysafe")){
+									
+									int count=0;
+									
+									while(count<5){
+										
+										if(!driver.findElement(By.cssSelector("[name='withdrawalAmount']")).isDisplayed()){
+											
+											Thread.sleep(200);
+											count++;
+											
+										}else{
+											
+											break;
+											
+										}
+										
+									}
+									
+									try{
+										
+										driver.findElement(By.cssSelector("[name='withdrawalAmount']")).clear();
+										driver.findElement(By.cssSelector("[name='withdrawalAmount']")).sendKeys(amount);
+										
+									}catch(Exception psw1){
+										
+										System.out.println("WithDrawal Amount Field not found");
+									}
+									
+									try{
+										
+										driver.findElement(By.cssSelector("[id='submit']")).click();
+									
+									}catch(Exception psw2){
+										
+										System.out.println("Withdrawal Button not Found");
+									}
+									
+									
+									
+									
+								}
 							
 									try{
 							
@@ -570,12 +644,57 @@ public class tests {
 							
 									try{
 									
-										if((driver.getCurrentUrl().contains("lobby")||driver.getCurrentUrl().contains("home")) && driver.findElement(By.cssSelector("[id='the_usernameright']")).getText().equals(logname)){
+										if(paymentcss.toLowerCase().contains("neteller")){
+												
+											if((driver.getCurrentUrl().contains("lobby")||driver.getCurrentUrl().contains("home")) && driver.findElement(By.cssSelector("[id='the_usernameright']")).getText().equals(logname)){
 								
-										System.out.println("Withdrawl complete and user correctly redirected to lobby");
-										System.out.println("-----------------------------------");
-																		
+												System.out.println("Withdrawl complete and user correctly redirected to lobby");
+												System.out.println("-----------------------------------");
+															
 										
+											}else{
+											
+												System.out.println("Redirection failed");
+												System.out.println("-----------------------------------");
+												success=1;
+											}
+											
+										}
+										
+										if(paymentcss.toLowerCase().contains("paysafe")){
+											
+											int count=0;
+											
+											while(count<5){
+												
+												if(!driver.findElement(By.cssSelector("[name='file1']")).isDisplayed()){
+													
+													
+													Thread.sleep(200);
+													
+													
+													if(count==5){
+														
+														System.out.println("Redirection failed");
+														System.out.println("-----------------------------------");
+														success=1;
+													}
+
+													count++;
+													
+												}else{
+													
+													System.out.println("Withdrawl complete and user correctly redirected to upload documents page");
+													System.out.println("-----------------------------------");
+													
+													break;
+												}
+											
+											}//while count
+											
+										
+										}
+									
 										try {
 					                
 											takesc(screenshot);
@@ -591,12 +710,7 @@ public class tests {
 										break;
 									
 									
-									}else{
-								
-										System.out.println("Redirection failed");
-										System.out.println("-----------------------------------");
-										success=1;
-									}
+									
 									}catch(Exception e21){
 										
 									}					
@@ -1376,6 +1490,7 @@ public class tests {
 		
 		//driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 		
+		String winHandleBefore = driver.getWindowHandle();
 		String merchant="//div[3]/label";
 		String email="//div[5]/label";
 		String auth="//div[7]/label";
@@ -1386,13 +1501,19 @@ public class tests {
 		String tid="//div[17]/label";
 		
 		String merchtxt="merchant name";
-		String emailtxt="e-mail";
+		String emailtxt="mail";
 		String autcodtxt="authorisation";
 		String transamtxt="transaction amount";
 		String transdattxt="transaction date";
 		String surnatxt="surname";
 		String trantytxt="transaction type";
 		String transidtxt="transaction id";
+		
+		String v1=null;
+		String v2=null;
+		String v3=null;
+		String v4=null;
+		
 		
 		if(language.equals("swedish")){
 			merchtxt="namn";
@@ -1497,6 +1618,8 @@ public class tests {
 				
 		}
 		
+		
+		
 		if(language.equals("english")){
 			
 			paymethod[2][1] ="10";
@@ -1511,6 +1634,44 @@ public class tests {
 		//};
 		}//if paymentcss contains neteller
 		
+		if(paymentcss.toLowerCase().contains("paysafe")){
+			
+			paymethod[0][0]="[qa='psamount']";
+			paymethod[0][1]="100";
+			paymethod[0][2]="text"; //Stage
+			paymethod[1][0]="null";
+			paymethod[1][1]="null";
+			paymethod[1][2]="null";
+			paymethod[2][0]="input[name='amount']";
+			paymethod[2][1]="100";
+			paymethod[2][2]="null";
+			paymethod[3][0]="[qa='dbutton']";
+			paymethod[3][1]="";
+			paymethod[3][2]="button";
+			paymethod[4][0]="a#submit.btn";
+			paymethod[4][1]="";
+			paymethod[4][2]="null";
+			
+			
+									
+			//if(batchid.contains("labels")){
+				
+				//paymethod[0][0] ="[qa='nanumber']";
+				//paymethod[1][0]="[qa='nsnumber']";
+				//paymethod[2][0]="[qa='namount']";
+				//paymethod[3][0]="[qa='dbutton']";
+							 
+			//}
+			
+			if(language.equals("english")){
+				
+				paymethod[0][1] ="10";
+				
+			}
+			
+			//};
+			}//if paymentcss contains paysafe
+			
 		/*String[][] arr= new String[15][3];
 		
 		arr[0][0]="hola";
@@ -1540,11 +1701,14 @@ public class tests {
 		
 		
 		String screenshot = "target/screenshots/deposit" + timesta + ".png";
+		int value=0;
+		double id=0;
 		//System.out.println(paymethod[1][1]);
 		//System.out.println(paymentcss);
 		//System.out.println(paymethod.length);
 		
 		int success=0;
+		
 		
 		for(int i=0;i<paymethod.length;i++){
 			
@@ -1580,26 +1744,230 @@ public class tests {
 				
 				try{
 				
-				
+				winHandleBefore = driver.getWindowHandle();
 				driver.findElement(By.cssSelector(paymethod[i][0])).click();
 				System.out.println("Deposit button clicked");
 				System.out.println("-----------------------------------");
 				//String btext=driver.findElement(By.cssSelector(paymethod[i][0])).getText().toLowerCase();
 			
 				
-				try{
-				
-				while(driver.findElement(By.cssSelector(paymethod[0][0])).isDisplayed()){
+				if(paymentcss.toLowerCase().contains("paysafe")){
 					
 					
-					System.out.println("Waiting for receipt");
-					System.out.println("-----------------------------------");
-					Thread.sleep(1000);
+					
+					
+					if(!batchid.contains("live")){
+						
+						v1="0000";
+						v2="0000";
+						v3="0990";
+						v4="1162";
+						
+					}else{
+						
+						stat3=con.createStatement();
+						stat3.clearBatch();
+						l2rs1= stat3.executeQuery("select * from psvoucher where value>=14");
+						
+						try{
+												
+							l2rs1.first();
+							
+						}catch(Exception psv1){
+							
+						}
+						
+						
+						if(l2rs1.isFirst()){
+							
+							v1=l2rs1.getString("V1");
+							v2=l2rs1.getString("V2");
+							v3=l2rs1.getString("V3");
+							v4=l2rs1.getString("V4");
+							value=l2rs1.getInt("value");
+							id=l2rs1.getDouble("id");
+							
+						}else{
+							
+							System.out.println("No voucher has been found");
+							success=1;
+							result=result+"<p>There is no remaining Paysafe vouchers<p>";
+							
+						}
+					
+					}
+					
+					int timeCount=0;
+					
+					while ( driver.getWindowHandles().size() == 1 ){	
+					
+					   driver.getWindowHandles();
+					   Thread.sleep(200);
+					   timeCount++;
+					   if ( timeCount > 50 ) 
+					   {
+					       break;
+					   }
+					}
+					
+					
+					
+					try{
+					
+						
+						System.out.println(driver.getCurrentUrl());
+						/*for(String winHandle : driver.getWindowHandles()){
+						    driver.switchTo().window(winHandle);
+						}*/
+						
+						//Get all the window handles in a set
+						Set <String> handles =driver.getWindowHandles();
+						Iterator<String> it = handles.iterator();
+						//iterate through your windows
+						String parent=null;
+						while (it.hasNext()){
+						parent = it.next();
+						String newwin = it.next();
+						driver.switchTo().window(newwin);}
+						//perform actions on new window
+						
+						System.out.println(driver.getCurrentUrl());
+						
+						timeCount=0;
+						
+						while(!driver.getCurrentUrl().contains("paysafecard")){
+							
+							Thread.sleep(200);
+							timeCount++;
+							if(timeCount>50){
+								break;
+							}
+							
+						
+							
+						}
+						
+						if(driver.getCurrentUrl().contains("paysafecard") && success==0){
+							
+							System.out.println("PaySafe present in Payment Page");
+							//result=result+"<p>PaySafe Commuication Confirmed<p>";
+							System.out.println("-----------------------------------");
+							
+							try{
+								driver.findElement(By.cssSelector("[id='pinForm:rn01']")).clear();
+								driver.findElement(By.cssSelector("[id='pinForm:rn01']")).sendKeys(v1);
+							}catch(Exception ps1){
+								System.out.println("Field not found");
+							}
+							
+							try{
+								driver.findElement(By.cssSelector("[id='pinForm:rn02']")).clear();
+								driver.findElement(By.cssSelector("[id='pinForm:rn02']")).sendKeys(v2);
+							}catch(Exception ps2){
+								System.out.println("Field not found");
+							}
+							
+							try{
+								driver.findElement(By.cssSelector("[id='pinForm:rn03']")).clear();
+								driver.findElement(By.cssSelector("[id='pinForm:rn03']")).sendKeys(v3);
+							}catch(Exception ps3){
+								System.out.println("Field not found");
+							}
+							
+							try{
+								driver.findElement(By.cssSelector("[id='pinForm:rn04']")).clear();
+								driver.findElement(By.cssSelector("[id='pinForm:rn04']")).sendKeys(v4);
+							}catch(Exception ps4){
+								System.out.println("Field not found");
+							}
+							
+							try{
+								driver.findElement(By.cssSelector("[id='pinForm:agb']")).click();
+							}catch(Exception ps5){
+								System.out.println("Checkbox not found");
+							}
+							System.out.println("Before click");
+							try{
+								driver.findElement(By.cssSelector("[id='pinForm:pay']")).click();
+							}catch(Exception ps6){
+								System.out.println("Button not found");
+							}
+							
+							
+							Thread.sleep(2000);
+							
+							//driver.switchTo().window(winHandleBefore);
+							/*for(String winHandle : driver.getWindowHandles()){
+							    driver.switchTo().window(winHandle);
+							}*/
+							driver.switchTo().window(parent);
+							
+							//screenshot = "target/screenshots/paysafepay" + timesta + ".png";
+							//takesc(screenshot);
+							//result=result+"<p>Screenshot of PaySafe payment suite <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+							//driver.close();
+							timeCount=0;
+							
+							while(!driver.getCurrentUrl().contains("deposit")){
+								
+								System.out.println(driver.getCurrentUrl().toString());
+								Thread.sleep(200);
+								
+							}
+							
+							
+							
+							
+						}else{
+							
+							System.out.println(driver.getCurrentUrl().toString());
+							result=result+"<p>PaySafe Commuication Failed<p>";
+							//result2=result2+"<td>FAILED</td></tr>";
+							success=1;
+							
+						}
+						
+						
+								
+					}catch(Exception e1){
+						
+						System.out.println("Something happens with PaySafe Pop Up");
+						success=1;
+						result=result+"<p>PaySafe Deposit Failed<p>";
+						
+					}
+					
+					System.out.println("Antes==>"+driver.getCurrentUrl());
+					/*for(String winHandle : driver.getWindowHandles()){
+					    driver.switchTo().window(winHandle);
+					}*/
+					//driver.switchTo().window(winHandleBefore);
+					System.out.println("Despues==>"+driver.getCurrentUrl());
+					try{
+						wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[qa='tplaynow']")));
+					}catch(Exception ps7){
+						
+					}
 					
 				}
 				
-				}catch(Exception e1){
+				
+				if(success==0){
+					try{
+				
+						while(driver.findElement(By.cssSelector(paymethod[0][0])).isDisplayed()){
+					
+					
+							System.out.println("Waiting for receipt");
+							System.out.println("-----------------------------------");
+							Thread.sleep(1000);
+					
+						}
+				
+					}catch(Exception e1){
 										
+					}
+				
 				}
 					
 				
@@ -1617,6 +1985,23 @@ public class tests {
                 result=result+"<p>Screenshot for the deposit <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
                 System.out.println("Deposit correctly placed");
                 System.out.println("-----------------------------------");
+                
+                if(paymentcss.toLowerCase().contains("paysafe") && success==0){
+                	
+                	value=value-14; //decrease vocuher value by 14 (So the value is in euros and we are depositing 10gbp or 100krs)
+                	
+                	try{
+                		
+                		stat3.executeUpdate("update psvoucher set value=" + value + " where id="+ id);
+                		
+                	}catch(Exception psd2){
+                		
+                		
+                	}
+                	
+                	result=result+"<p>Paysafe Voucher Used==>"+v1+":"+v2+":"+v3+":"+v4+"==> Remaining money in voucher==>"+value+"<p>";
+                	
+                }
                 
 				if(!batchid.contains("labels")){
 				if(driver.findElement(By.xpath(merchant)).isDisplayed() && driver.findElement(By.xpath(merchant)).getText().toLowerCase().contains(merchtxt)){
@@ -2209,6 +2594,12 @@ public class tests {
 				if(paytest.toLowerCase().contains("neteller")){
 					
 					paymentcss="[qa='netellerdeposit']";
+					
+				}
+				
+				if(paytest.toLowerCase().contains("paysafe")){
+					
+					paymentcss="[qa='paysafedeposit']";
 					
 				}
 				
@@ -3261,12 +3652,46 @@ public class tests {
 	    		}catch(Exception e){
 	    			success=1;
 	    		}*/
+	    		int count1=0;
+	    		
+	    		while(count1<6){
 	    		try{
-	    		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(next)));
+	    			
+	    			if(!driver.findElement(By.cssSelector(next)).isDisplayed()){
+	    			
+	    				count1++;
+	    				Thread.sleep(200);
+	    				System.out.println("Next Button not finded try==>"+count1);
+	    				if(count1>=5){
+	    					
+	    					success=1;
+	    					break;
+	    					
+	    				}
+	    				
+	    			}else{
+	    				
+	    				z=count;
+	    				break;
+	    				
+	    			}
+	    				//wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(next)));
 	    		
 	    		}catch(Exception e10){
 	    			
+	    			count1++;
+    				Thread.sleep(200);
+    				System.out.println("Next Button not finded try==>"+count1);
+    				if(count1>=5){
+    					
+    					success=1;
+    					break;
+    					
+    				}
+	    			
 	    		}
+	    		}//while count1
+	    		System.out.println("Continue");
 	    		String genmail="QAautomation"+timesta+"@gtech.com";
 	    		try{
 	    		driver.findElement(By.cssSelector(email)).clear(); 
@@ -3356,6 +3781,12 @@ public class tests {
     				result2=result2+"<td>FAILED</td></tr>";
     				result=result+"<p>L1 Step 1 FAILED<p>";
     				overall="FAILED";
+    				screenshot = "target/screenshots/screenshot" + timesta + ".png";
+    				takesc(screenshot);
+    				   				
+    				result=result+"<p> Click on the screenshot to see it larger <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+    				
+    				break;
     				
 	    		}
 	    		
@@ -3498,6 +3929,7 @@ public class tests {
 	    				//result2=result2+"<td>FAILED</td></tr>";
 	    				//result=result+"<p>L1 Step 2 FAILED<p>";
 	    				overall="FAILED";
+	    				
 		    				
 	    			}
 	    			
@@ -3554,6 +3986,16 @@ public class tests {
     					result2=result2+"<td>FAILED</td></tr>";
     					result=result+"<p>L1 Step 2 FAILED<p>";
     					overall="FAILED";
+    					result2=result2+"<tr><td>"+testid+"</td>";
+        				result2=result2+"<td>FAILED</td></tr>";
+        				result=result+"<p>L1 Step 1 FAILED<p>";
+        				overall="FAILED";
+        				screenshot = "target/screenshots/screenshot" + timesta + ".png";
+        				takesc(screenshot);
+        				   				
+        				result=result+"<p> Click on the screenshot to see it larger <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+        				
+        				break;
     				}
 	    			
 	    		}else{
@@ -3569,6 +4011,16 @@ public class tests {
 	    				overall="FAILED";
 	    				result2=result2+"<td>FAILED</td></tr>";
     					result=result+"<p>L1 Step 2 FAILED<p>";
+    					result2=result2+"<tr><td>"+testid+"</td>";
+        				result2=result2+"<td>FAILED</td></tr>";
+        				result=result+"<p>L1 Step 1 FAILED<p>";
+        				overall="FAILED";
+        				screenshot = "target/screenshots/screenshot" + timesta + ".png";
+        				takesc(screenshot);
+        				   				
+        				result=result+"<p> Click on the screenshot to see it larger <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
+        				
+        				break;
 	    				
 	    			}
 				

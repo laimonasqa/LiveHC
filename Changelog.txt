@@ -1,0 +1,81 @@
+AUTOMATION APPLICATION CHANGELOG
+
+0.021
+
+-	Paysafe payment and withdrawal implemented
+-	General Improvements to the code have made it more estable
+-	Now application stops if anything fails while in L1 registration
+
+0.020
+
+- 	Now the payment would be picked from the database
+-	Added a try/catch to the username checking at the end of a withdrawal to increase stability
+
+
+
+0.019
+
+-	Able to check communication on all payment methods excepting VISA
+-	Able to check error messages in the 3 IBN Languages (English, Swedish , Norwegian)
+-	Improved stability
+-	Improved language acquiring
+-	Now labels are used for all sites in common pages.
+-	Due to Labels integration, the application is able to test Swedish and Norwegian sites (All that include labels)
+
+0.018
+
+-	Added some changes to report, now the report is more accurate with which test is failing and which not.
+-	Modified the way to report of payment checks, before if any of them fails the following will appear as failed no matter if It failed or not.
+-	Added a new wait.until and a new loop that will look for the error message in payment checks 3 times before fail. This improve the message finding. 
+-	Some changes added to code to improve speed and stability.
+
+0.017
+
+-	Now the payments to be checked can be added individually to the batch so we can choose what payment have to be checked in each single batch.
+-	Reports have been improved to show all the payment methods checking individually
+-	Both regular CSS and Labels CSS have been implemented for these changes, so the code is working in both ways.
+-	All IBN English sites batches have been updated to work in this way, now l1club3000 is working.
+
+0.016
+-	Now all the screenshots are taken when a deposit is placed showing the receipt ticket (worked in carlton Bingo and Bingozino (both stage))
+-	Fixed issue with Payment ICON checking, before states overall as failed but showed pass in the results table
+-	Found a new way to wait for element, now using wait for button to be clickable, seems to be more efficient and stable.
+-	Code are more robust now, some improvements made to it replacing try’s and removing some loops to increase stability and speed.
+-	Before this update, an error screenshot was launched also if a deposit was successfully placed, this was fixed
+
+0.015
+
+-	Improvement in the code, a “TRY” was included in the last update and was not launching any error if an Exception occurs. This is fixed now.
+
+0.014
+
+-	Maven project redefined to make easiest for the code to find classes into the project
+-	Added some control messages to be able to see what is happening in some steps (I ask you to leave in there for now so if anything fails would be easiest for us to find where exactly failed)
+-	Added some code improvements regarding element finding, now I am not getting the running locking we got before in Slotmine.
+-	Timeout has been placed at 5 seconds and everything is working right in server, so I would say to left it in 5 and launch Live 1 Job. If anything goes wrong I will raise it to 60 as always.
+-	Decrease a lot the time of execution for the second iteration, now a global variable stores the Register Element Css once it is adquired in first iteration, so it is no need to find for it again in 2nd iteration.
+
+0.013
+
+-	Now the batch will be launched twice if anything fails, to ensure that the site is failing and is nothing about the code.
+-	Timeout raised to 60.
+
+0.012
+
+-	More Control in the report, now it is showing a test is failed also if the running chain is broken by code or selenium.
+-	Added report control in case that the batch id not exists
+-	Screenshots improved, now the application can take screenshots using Chrome, Internet Explorer and Firefox, in Local Maven and Local Jenkins, Have to be tested on server.
+-	Timeout is now 30 seconds, all the tests have passed or failed no matter what the timeout is, also if the timeout is 60.
+
+0.011
+
+Browser can be selected from command line
+
+-Dbrowser=chrome                        For Chrome
+-Dbrowser=ie                                    For Internet Explorer
+-Dbrowser=firefox                          For Firefox
+
+If the argument is omitted tests will be launch on firefox by default.
+
+
+
