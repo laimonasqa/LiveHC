@@ -266,8 +266,8 @@ public class tests {
 			
 			if(browser.equals("ie")){
 				
-				File file = new File("IEDriverServer.exe");
-				System.setProperty("webdriver.ie.driver", file.getAbsolutePath());
+			//	File file = new File("IEDriverServer.exe");
+			//	System.setProperty("webdriver.ie.driver", file.getAbsolutePath());
 				driver = new InternetExplorerDriver();
 			
 			}
