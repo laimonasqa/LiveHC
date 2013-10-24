@@ -256,9 +256,9 @@ public class tests {
 		
 			if(browser.equals("chrome")){
 				
-				DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-				capabilities.setCapability("chrome.switches", Arrays.asList("--disable-loggin"));
-				System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
+			//	DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+			//	capabilities.setCapability("chrome.switches", Arrays.asList("--disable-loggin"));
+			//	System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
 				driver = new ChromeDriver(capabilities);
 			
 			}
