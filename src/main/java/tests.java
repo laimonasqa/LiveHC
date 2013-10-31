@@ -260,7 +260,6 @@ public class tests {
 		
 			if(browser.equals("chrome")){
 				
-<<<<<<< HEAD
 				/*DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 				capabilities.setCapability("chrome.switches", Arrays.asList("--disable-loggin"));
 				//System.setProperty("webdriver.chrome.driver", "chromedriver.exe");*/
@@ -269,25 +268,13 @@ public class tests {
 				DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 				capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 				driver = new ChromeDriver(capabilities);
-=======
-			//	DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-			//	capabilities.setCapability("chrome.switches", Arrays.asList("--disable-loggin"));
-			//	System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
-			//	driver = new ChromeDriver(capabilities);
-				driver = new ChromeDriver();
->>>>>>> b093fadc6762d2299d3e65445ce7111dd72c9cc1
 			
 			}
 			
 			if(browser.equals("ie")){
 				
-<<<<<<< HEAD
 				//File file = new File("IEDriverServer.exe");
 				//System.setProperty("webdriver.ie.driver", file.getAbsolutePath());
-=======
-			//	File file = new File("IEDriverServer.exe");
-			//	System.setProperty("webdriver.ie.driver", file.getAbsolutePath());
->>>>>>> b093fadc6762d2299d3e65445ce7111dd72c9cc1
 				driver = new InternetExplorerDriver();
 			
 			}
