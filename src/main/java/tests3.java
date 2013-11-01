@@ -3148,8 +3148,9 @@ public class tests3 {
 									System.out.println("Payment Name ==" + chktext + "== Present");
 									System.out.println("-----------------------------------");
 									screenshot = "target/screenshots/" + chktext + timesta3 + ".png";
-									takesc(screenshot);
+									if(chktext.equals("paypal")){takesc(screenshot);}
 									success=paymenterrorcheck(chktext,success);
+									if(!chktext.equals("paypal")){takesc(screenshot);}
 									//System.out.println("Success after payment check===>"+success);
 									//result6=result6+"<td>PASS</td></tr>";
 									
