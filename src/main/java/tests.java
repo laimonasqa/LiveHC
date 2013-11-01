@@ -119,6 +119,7 @@ public class tests {
 	public static Statement stat4=null;
 	public int total=0;
 	public int failed=0;
+	String amount="100"; //Initialize amount for payments (will change to 10 in case of english site)
 	
 	public static String browser;
 	
@@ -184,7 +185,7 @@ public class tests {
 		stat2= con.createStatement();
 		
 		System.out.println("-----------------------------------");
-		System.out.println("Automation Application Rev 0.022");
+		System.out.println("Automation Application Rev 0.023");
 		System.out.println("-----------------------------------");
 		
 		System.out.println("Now Acquiring Batch from Database");
@@ -448,14 +449,14 @@ public class tests {
 	
 
 	
-	public void ibnwithdrawl(String paymentcss,String logname) throws Exception{
+public void ibnwithdrawl(String paymentcss,String logname) throws Exception{
 		
 		
 		started=started+1;
 		String screenshot = "target/screenshots/withdrawl" + timesta + ".png";
 		System.out.println("Launching Withdrawl Test");
 	    System.out.println("-----------------------------------");
-	    String amount="100";
+	    
 		result2=result2+"<tr><td>Withdrawl</td>";
 		
 		String[] wdlink = {"[qa='withdrawal']","a.button_withdraw","#log_account_buttons a.button_withdraw"};
@@ -472,14 +473,14 @@ public class tests {
 			wdmethod[1][1]="button";
 			wdmethod[1][2]="";
 			
-			if(language.equals("english")){
+			if(language.equals("english")&&!paymentcss.toLowerCase().contains("ukash")){
 				
 				wdmethod[0][2]="10";
 			}
 
 		}
 		
-		if(paymentcss.toLowerCase().contains("paysafe")){
+		if(paymentcss.toLowerCase().contains("paysafe")||paymentcss.toLowerCase().contains("ukash")){
 			
 			wdmethod[0][0]="[name='bankName']";
 			wdmethod[0][1]="text";
@@ -500,7 +501,7 @@ public class tests {
 			wdmethod[5][1]="button";
 			wdmethod[5][2]="";
 			
-			if(language.equals("english")){
+			if(language.equals("english")&&!paymentcss.toLowerCase().contains("ukash")){
 				
 				amount="10";
 			}
@@ -585,7 +586,7 @@ public class tests {
 							
 								Thread.sleep(1000);
 								
-								if(paymentcss.toLowerCase().contains("paysafe")){
+								if(paymentcss.toLowerCase().contains("paysafe")||paymentcss.toLowerCase().contains("ukash")){
 									
 									int count=0;
 									
@@ -669,10 +670,10 @@ public class tests {
 											
 										}
 										
-										if(paymentcss.toLowerCase().contains("paysafe")){
+										if(paymentcss.toLowerCase().contains("paysafe")||paymentcss.toLowerCase().contains("ukash")){
 											
 											int count=0;
-											
+											System.out.println("Looking for upload files screen");
 											while(count<5){
 												
 												if(!driver.findElement(By.cssSelector("[name='file1']")).isDisplayed()){
@@ -724,10 +725,10 @@ public class tests {
 									}					
 							}catch(Exception e1){
 							
-								System.out.println("Withdrawl button not found");
+								System.out.println("Withdrawal button not found");
 								System.out.println("-----------------------------------");
 								success=1;
-								result=result+"<p>Withdrawl: Button not found<P>";
+								result=result+"<p>Withdrawal: Button not found<P>";
 									                
 									takesc(screenshot);
 									result=result+"<p>wdrwlbutt Error Screenshot <a href=../../"+screenshot+"><img SRC=../../"+screenshot+" width=100 height=100></a><p>";
@@ -746,13 +747,13 @@ public class tests {
 				if (success==0){
 					
 					result2=result2+"<td>PASS</td></tr>";
-					System.out.println("Withdrawl Test Passed");
+					System.out.println("Withdrawal Test Passed");
 					System.out.println("-----------------------------------");
 					
 				}else{
 					
 					result2=result2+"<td>FAILED</td></tr>";
-					System.out.println("Withdrawl Test Failed");
+					System.out.println("Withdrawal Test Failed");
 					System.out.println("-----------------------------------");
 					overall="FAILED";
 				}
@@ -1357,7 +1358,7 @@ public class tests {
 		
 		if(payment.equals("neteller")){	
 			
-			String amount="";
+			
 			
 						
 				try{
@@ -1494,7 +1495,7 @@ public class tests {
 	}
 		
 		
-	public void ibndeposit(String paymentcss,String logname) throws Exception{
+public void ibndeposit(String paymentcss,String logname) throws Exception{
 		
 		started=started+1;		
 		System.out.println("Starting IBN Deposit");
@@ -1700,7 +1701,7 @@ public class tests {
 					}
 				stat3=con.createStatement();
 				stat3.clearBatch();
-				l2rs1= stat3.executeQuery("select * from ukashvoucher where currency='"+currency+"' and avaliable='yes' and usage='live'");
+				l2rs1= stat3.executeQuery("select * from ukashvouchers where currency='"+currency+"' and avaliable='yes' and host='live'");
 			
 			}else{
 				
@@ -1710,7 +1711,8 @@ public class tests {
 					}
 				stat3=con.createStatement();
 				stat3.clearBatch();
-				l2rs1= stat3.executeQuery("select * from ukashvoucher where currency='"+currency+"' and avaliable='yes' and usage='staging'");
+				System.out.println("select * from ukashvouchers where currency='"+currency+"' and avaliable='yes' and host='staging'");
+				l2rs1= stat3.executeQuery("select * from ukashvouchers where currency='"+currency+"' and avaliable='yes' and host='staging'");
 				
 				
 			}
@@ -1727,6 +1729,7 @@ public class tests {
 					
 					ukvoucher=l2rs1.getString("voucher");
 					ukvid=l2rs1.getInt("id");
+					amount=l2rs1.getString("value");
 					
 				}else{
 					
@@ -1738,9 +1741,9 @@ public class tests {
 							
 			
 			paymethod[1][0]="[qa='ukvalue']";
-			paymethod[1][1]="100";
+			paymethod[1][1]= amount;
 			paymethod[1][2]="text"; //Stage
-			paymethod[0][0]="[qa='ukvoucher]'";
+			paymethod[0][0]="[qa='ukvoucher']";
 			paymethod[0][1]=ukvoucher;
 			paymethod[0][2]="text";
 			paymethod[2][0]="input[name='amount']"; //not used
@@ -1764,11 +1767,11 @@ public class tests {
 							 
 			//}
 			
-			if(language.equals("english")){
+			/*if(language.equals("english")){
 				
 				paymethod[1][1] ="10";
 				
-			}
+			}*/
 			
 			//};
 			}//if paymentcss contains ukash
@@ -2088,19 +2091,41 @@ public class tests {
                 
                 if(paymentcss.toLowerCase().contains("paysafe") && success==0){
                 	
-                	value=value-14; //decrease vocuher value by 14 (So the value is in euros and we are depositing 10gbp or 100krs)
+                	if(batchid.toLowerCase().contains("live")){
+                		
+                		value=value-14; //decrease vocuher value by 14 (So the value is in euros and we are depositing 10gbp or 100krs)
+                	                	
+                		try{
+                		
+                			stat3.executeUpdate("update psvoucher set value=" + value + " where id="+ id);
+                		
+                		}catch(Exception psd2){
+                		
+                		
+                		}
+                		result=result+"<p>Paysafe Voucher Used==>"+v1+":"+v2+":"+v3+":"+v4+"==> Remaining money in voucher==>"+value+"<p>";
+                	}else{
+                		
+                		result=result+"<p>Paysafe Voucher Used==>"+v1+":"+v2+":"+v3+":"+v4+"==> Staging voucher<p>";
+                		
+                	}//if batchid contains live
                 	
-                	try{
-                		
-                		stat3.executeUpdate("update psvoucher set value=" + value + " where id="+ id);
-                		
-                	}catch(Exception psd2){
-                		
-                		
-                	}
                 	
-                	result=result+"<p>Paysafe Voucher Used==>"+v1+":"+v2+":"+v3+":"+v4+"==> Remaining money in voucher==>"+value+"<p>";
                 	
+                }
+                
+                if(paymentcss.toLowerCase().contains("ukash") && success==0){
+                	
+                	                	
+                		try{
+                		
+                			stat3.executeUpdate("update ukashvouchers set avaliable='no' where voucher='" + ukvoucher+"'");
+                			
+                		}catch(Exception psd2){
+                		                		
+                		}
+                		
+                		result=result+"<p>UKASH Voucher Used==>"+ukvoucher+"<p>";
                 }
                 
 				if(!batchid.contains("labels")){
@@ -2299,6 +2324,7 @@ public class tests {
 									                System.out.println("Deposit correctly placed");
 									                System.out.println("-----------------------------------");
 									    			//result2=result2+"<td>PASS</td></tr>";
+									                
 									                
 									           											
 																					
@@ -2700,6 +2726,12 @@ public class tests {
 				if(paytest.toLowerCase().contains("paysafe")){
 					
 					paymentcss="[qa='paysafedeposit']";
+					
+				}
+				
+				if(paytest.toLowerCase().contains("ukash")){
+					
+					paymentcss="[qa='ukashdeposit']";
 					
 				}
 				

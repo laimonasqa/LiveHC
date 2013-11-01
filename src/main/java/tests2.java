@@ -120,6 +120,7 @@ public class tests2 {
 	public int failed=0;
 	
 	public static String browser;
+	String amount="100"; //amount for deposits (will change to 10 in case of english site)
 	
 
 	@Test
@@ -184,7 +185,7 @@ public class tests2 {
 		stat2= con.createStatement();
 		
 		System.out.println("-----------------------------------");
-		System.out.println("Automation Application Rev 0.022");
+		System.out.println("Automation Application Rev 0.023");
 		System.out.println("-----------------------------------");
 		
 		System.out.println("Now Acquiring Batch from Database");
@@ -444,14 +445,14 @@ public class tests2 {
 	
 
 	
-	public void ibnwithdrawl(String paymentcss,String logname) throws Exception{
+public void ibnwithdrawl(String paymentcss,String logname) throws Exception{
 		
 		
 		started=started+1;
 		String screenshot = "target/screenshots/withdrawl" + timesta2 + ".png";
 		System.out.println("Launching Withdrawl Test");
 	    System.out.println("-----------------------------------");
-	    String amount="100";
+	    
 		result4=result4+"<tr><td>Withdrawl</td>";
 		
 		String[] wdlink = {"[qa='withdrawal']","a.button_withdraw","#log_account_buttons a.button_withdraw"};
@@ -468,14 +469,14 @@ public class tests2 {
 			wdmethod[1][1]="button";
 			wdmethod[1][2]="";
 			
-			if(language.equals("english")){
+			if(language.equals("english")&&!paymentcss.toLowerCase().contains("ukash")){
 				
 				wdmethod[0][2]="10";
 			}
 
 		}
 		
-		if(paymentcss.toLowerCase().contains("paysafe")){
+		if(paymentcss.toLowerCase().contains("paysafe")||paymentcss.toLowerCase().contains("ukash")){
 			
 			wdmethod[0][0]="[name='bankName']";
 			wdmethod[0][1]="text";
@@ -496,7 +497,7 @@ public class tests2 {
 			wdmethod[5][1]="button";
 			wdmethod[5][2]="";
 			
-			if(language.equals("english")){
+			if(language.equals("english")&&!paymentcss.toLowerCase().contains("ukash")){
 				
 				amount="10";
 			}
@@ -581,7 +582,7 @@ public class tests2 {
 							
 								Thread.sleep(1000);
 								
-								if(paymentcss.toLowerCase().contains("paysafe")){
+								if(paymentcss.toLowerCase().contains("paysafe")||paymentcss.toLowerCase().contains("ukash")){
 									
 									int count=0;
 									
@@ -665,7 +666,7 @@ public class tests2 {
 											
 										}
 										
-										if(paymentcss.toLowerCase().contains("paysafe")){
+										if(paymentcss.toLowerCase().contains("paysafe")||paymentcss.toLowerCase().contains("ukash")){
 											
 											int count=0;
 											
@@ -1718,6 +1719,7 @@ public class tests2 {
 					
 					ukvoucher=l2rs1.getString("voucher");
 					ukvid=l2rs1.getInt("id");
+					amount=l2rs1.getString("value");
 					
 				}else{
 					
@@ -1729,7 +1731,7 @@ public class tests2 {
 							
 			
 			paymethod[1][0]="[qa='ukvalue']";
-			paymethod[1][1]="100";
+			paymethod[1][1]= amount;
 			paymethod[1][2]="text"; //Stage
 			paymethod[0][0]="[qa='ukvoucher]'";
 			paymethod[0][1]=ukvoucher;
@@ -1755,11 +1757,11 @@ public class tests2 {
 							 
 			//}
 			
-			if(language.equals("english")){
+			/*if(language.equals("english")){
 				
 				paymethod[1][1] ="10";
 				
-			}
+			}*/
 			
 			//};
 			}//if paymentcss contains ukash
@@ -2291,6 +2293,13 @@ public class tests2 {
 									                System.out.println("-----------------------------------");
 									    			//result4=result4+"<td>PASS</td></tr>";
 									                
+									                if(paymentcss.toLowerCase().contains("ukash")){
+									                	
+									                	stat3=con.createStatement();
+									    				stat3.clearBatch();
+									    				l2rs1= stat3.executeQuery("update ukashvouchers set avaliable='no' where id=" + ukvid);
+									    				
+									                }
 									           											
 																					
 												}else{

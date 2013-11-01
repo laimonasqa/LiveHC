@@ -32,7 +32,7 @@ import com.googlecode.jeeunit.concurrent.Concurrent;
 import com.googlecode.jeeunit.concurrent.ConcurrentRunner;
 
 //AUTOMATION APPLICATION
-//VERSION 0.022
+//VERSION 0.023
 
 
 

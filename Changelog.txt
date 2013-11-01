@@ -1,11 +1,16 @@
 AUTOMATION APPLICATION CHANGELOG
 
+0.023
+
+-	UKASH Payment ready
+
 0.022
 
 -	2 Browsers can be launched at the same time on the same computer by adding -Dbrowser2=xxxxxx argument
 -	Improved stability in UKASH payment Checking
 -	General stabilty improved
 -	Chrome parameters chage to suit server requirements
+-	Application now reports separately Iteration 1 and 2 showing first iteration if fails and username used for all iterations.
 
 0.021
 
